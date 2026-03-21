@@ -1,15 +1,37 @@
 # AuraMail: Voice-Enabled Email System for the Visually Impaired
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js 18+](https://img.shields.io/badge/Node.js-18+-green)](https://nodejs.org/)
 [![Accessibility: WCAG 2.1 AAA](https://img.shields.io/badge/Accessibility-WCAG%202.1%20AAA-blue)](https://www.w3.org/WAI/WCAG21/quickref/)
 
 Production-ready, voice-controlled email system designed for visually impaired and partially sighted users. Built with enterprise-grade architecture, full accessibility compliance, and real Gmail integration.
 
+## 📑 Table of Contents
+
+- [Why AuraMail?](#-why-auramail)
+- [Tech Stack](#-tech-stack)
+- [Features](#-features)
+- [Project Structure](#-project-structure)
+- [Quick Start](#-quick-start)
+- [API Documentation](#-api-documentation)
+- [Voice Commands](#-voice-commands)
+- [Security](#-security-best-practices)
+- [Deployment](#-deployment)
+- [Testing](#-testing)
+- [Troubleshooting](#-troubleshooting)
+- [Implementation Details](#-implementation-details)
+- [Contributing](#-contributing)
+- [License](#-license)
+
 ## 🎯 Why AuraMail?
 
-Over **253 million people worldwide** live with visual impairments, yet email remains largely inaccessible. 
-AuraMail brings **voice-first email management** to Gmail, enabling independent communication without 
-manual assistance or expensive specialized software.
+Over **253 million people worldwide** live with visual impairments, yet email remains largely inaccessible. AuraMail brings **voice-first email management** to Gmail, enabling independent communication without manual assistance or expensive specialized software.
+
+### Key Impact
+- ♿ **Accessibility as Default** - Not an afterthought
+- 🎤 **Natural Interaction** - Voice commands, not complex menus
+- 🔒 **Privacy & Security** - Your Gmail, your control
+- 💰 **Cost-Effective** - Open source alternative to $500+ accessibility tools
 
 ## 🛠️ Tech Stack
 
@@ -19,6 +41,7 @@ manual assistance or expensive specialized software.
 | Backend | Node.js, Express, Gmail API |
 | Auth | OAuth 2.0, JWT |
 | Deployment | Render, Vercel, Netlify, Google Cloud Run |
+| Testing | Manual + API curl tests |
 
 ## 🌟 Features
 
@@ -194,6 +217,9 @@ Response: {
 #### `POST /api/auth/logout`
 Logout user
 
+#### `GET /api/auth/user`
+Returns current authenticated user info
+
 ### Email Endpoints
 
 #### `GET /api/emails`
@@ -260,20 +286,6 @@ Request: {
 #### `GET /api/emails/labels`
 Get all Gmail labels for the user
 
-### Authentication Endpoints
-
-#### `GET /api/auth/google`
-Initiates Google OAuth 2.0 flow
-
-#### `GET /api/auth/google/callback`
-OAuth callback handler
-
-#### `POST /api/auth/logout`
-Logs out user and clears session
-
-#### `GET /api/auth/user`
-Returns current authenticated user info
-
 ## 🎙️ Voice Commands
 
 The application uses the Web Speech API for voice recognition and synthesis. All voice commands are processed in the browser.
@@ -311,33 +323,33 @@ The application uses the Web Speech API for voice recognition and synthesis. All
 
 ### Production Checklist
 
-1. **Environment Variables**
+#### 1. Environment Variables
    - Generate strong secrets: `openssl rand -base64 32`
    - Never commit `.env` files
    - Use environment-specific configs
 
-2. **HTTPS/TLS**
+#### 2. HTTPS/TLS
    - Enable HTTPS in production
    - Use Let's Encrypt certificates
    - Set `COOKIE_SECURE=true`
 
-3. **CORS Configuration**
+#### 3. CORS Configuration
    - Set specific `CORS_ORIGIN`
    - Remove wildcard origins
    - Validate redirect URIs
 
-4. **Session Security**
+#### 4. Session Security
    - Use secure session secrets
    - Set secure cookie flags
    - Implement session expiration
 
-5. **API Security**
+#### 5. API Security
    - Validate all inputs
    - Sanitize HTML email content (using sanitizeHTML function)
    - Use Gmail API rate limiting
    - Implement request throttling
 
-6. **Email Content Security**
+#### 6. Email Content Security
    - HTML emails rendered in sandboxed iframes (`sandbox="allow-same-origin"`)
    - JavaScript and event handlers stripped from HTML content
    - External resources (scripts, forms) removed
@@ -356,54 +368,54 @@ The application uses the Web Speech API for voice recognition and synthesis. All
 ### Frontend (Static Hosting)
 
 Deploy to any static hosting service:
-- **Vercel**: Connect repo, deploy root directory
-- **Netlify**: Connect repo, publish directory: `/`
-- **GitHub Pages**: Push to `gh-pages` branch
+
+**Vercel**:
+- Connect repo, deploy root directory
+
+**Netlify**:
+- Connect repo, publish directory: `/`
+
+**GitHub Pages**:
+- Push to `gh-pages` branch
 
 ### Backend (Node.js)
 
-**Render**:
+#### Option 1: Render
+
 1. Connect GitHub repository
 2. Create new Web Service
 3. Settings:
-   - Build Command: `cd backend && npm install`
-   - Start Command: `cd backend && node src/server.js`
+   - **Build Command**: `cd backend && npm install`
+   - **Start Command**: `cd backend && node src/server.js`
    - Add environment variables from `.env.example`
    - Set `FRONTEND_URL` to your frontend domain
 
-**Google Cloud Run**:
-```bash
-cd backend
-gcloud builds submit --tag gcr.io/PROJECT_ID/voice-email-backend
-gcloud run deploy voice-email-backend \
-  --image gcr.io/PROJECT_ID/voice-email-backend \
-  --platform managed
-```
+#### Option 2: Fly.io
 
 ```bash
 # Install flyctl
 curl -L https://fly.io/install.sh | sh
 
 # Launch app
-cd python-ai-backend
+cd backend
 fly launch
 
 # Deploy
 fly deploy
 ```
 
-`fly.toml`:
+Create `fly.toml`:
 ```toml
-app = "voice-email-ai"
+app = "auramail-backend"
 
 [build]
-  dockerfile = "Dockerfile"
+  builder = "heroku"
 
 [env]
-  PORT = "5000"
+  PORT = "3001"
 
 [[services]]
-  internal_port = 5000
+  internal_port = 3001
   protocol = "tcp"
 
   [[services.ports]]
@@ -415,38 +427,42 @@ app = "voice-email-ai"
     handlers = ["tls", "http"]
 ```
 
-### Google Cloud Run
+#### Option 3: Google Cloud Run
 
 ```bash
 # Build and push
-gcloud builds submit --tag gcr.io/PROJECT_ID/voice-email-backend
-gcloud builds submit --tag gcr.io/PROJECT_ID/voice-email-ai
+cd backend
+gcloud builds submit --tag gcr.io/PROJECT_ID/auramail-backend
 
 # Deploy
-gcloud run deploy voice-email-backend \
-  --image gcr.io/PROJECT_ID/voice-email-backend \
+gcloud run deploy auramail-backend \
+  --image gcr.io/PROJECT_ID/auramail-backend \
+  --platform managed \
+  --region us-central1 \
+  --set-env-vars FRONTEND_URL=https://your-frontend-url.com
+```
 
 ## 🧪 Testing
 
 ### Manual Testing
 
-1. **Authentication Flow**
-   - Open `http://localhost:3000`
-   - Click "Sign in with Google"
-   - Verify successful redirect and email loading
+#### Authentication Flow
+1. Open `http://localhost:3000`
+2. Click "Sign in with Google"
+3. Verify successful redirect and email loading
 
-2. **Email Operations**
-   - Navigate folders (inbox, sent, drafts, spam, trash)
-   - Open emails and verify HTML/plain text rendering
-   - Test attachments download
-   - Send, reply, forward emails
-   - Delete emails
+#### Email Operations
+- Navigate folders (inbox, sent, drafts, spam, trash)
+- Open emails and verify HTML/plain text rendering
+- Test attachments download
+- Send, reply, forward emails
+- Delete emails
 
-3. **Voice Commands**
-   - Enable microphone permissions
-   - Test voice recognition: "read inbox", "compose email"
-   - Test voice synthesis: "read email" command
-   - Verify voice feedback for actions
+#### Voice Commands
+- Enable microphone permissions
+- Test voice recognition: "read inbox", "compose email"
+- Test voice synthesis: "read email" command
+- Verify voice feedback for actions
 
 ### API Testing
 
@@ -455,7 +471,7 @@ gcloud run deploy voice-email-backend \
 curl http://localhost:3001/health
 
 # Test authentication (requires valid session)
-curl http://localhost:3001/api/auth/user \
+curl http://localhost:3001/api/auth/me \
   -H "Cookie: connect.sid=YOUR_SESSION_ID"
 
 # Test email list
@@ -533,24 +549,41 @@ For more detailed troubleshooting, see [DEVELOPMENT_LOG.md](./DEVELOPMENT_LOG.md
 4. Results cached in memory to avoid redundant API calls
 5. Email list updated with proper sender/recipient display logic
 
-## 📝 License
+## 🗺️ Roadmap
 
-MIT License - feel free to use for any purpose
+- [ ] Support for multiple email providers (Outlook, Yahoo)
+- [ ] Offline mode with local sync
+- [ ] Advanced voice command training
+- [ ] Calendar integration
+- [ ] Multi-language support
+- [ ] Mobile app (iOS/Android)
 
 ## 🤝 Contributing
 
 Contributions welcome! Please:
+
 1. Fork the repository
-2. Create a feature branch
-3. Add tests for new features
-4. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+Please ensure:
+- Code follows existing style conventions
+- Tests are added for new features
+- README is updated if needed
+- Accessibility standards are maintained
 
 ## 📧 Support
 
 For issues or questions:
-- Create a GitHub issue
+- Create a [GitHub issue](https://github.com/yourusername/auramail/issues)
 - Check [DEVELOPMENT_LOG.md](./DEVELOPMENT_LOG.md) for known issues
 - Review troubleshooting guide above
+
+## 📝 License
+
+MIT License - feel free to use for any purpose. See [LICENSE](./LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
@@ -558,7 +591,10 @@ For issues or questions:
 - **Web Speech API** - Browser-native voice recognition and synthesis
 - **Express.js** - Backend server framework
 - **googleapis** - Node.js library for Gmail API integration
+- **Bootstrap 5** - Responsive UI framework
 
 ---
 
-**Built with ♿ accessibility in mind**
+**Built with ♿ accessibility in mind for the 253 million people living with visual impairments worldwide.**
+
+*Made with ❤️ by the Rajat Malik*
