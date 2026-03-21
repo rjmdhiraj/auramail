@@ -1,6 +1,24 @@
-# Voice-Enabled Email System
+# AuraMail: Voice-Enabled Email System for the Visually Impaired
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js 18+](https://img.shields.io/badge/Node.js-18+-green)](https://nodejs.org/)
+[![Accessibility: WCAG 2.1 AAA](https://img.shields.io/badge/Accessibility-WCAG%202.1%20AAA-blue)](https://www.w3.org/WAI/WCAG21/quickref/)
 
 Production-ready, voice-controlled email system designed for visually impaired and partially sighted users. Built with enterprise-grade architecture, full accessibility compliance, and real Gmail integration.
+
+## 🎯 Why AuraMail?
+
+Over **253 million people worldwide** live with visual impairments, yet email remains largely inaccessible. 
+AuraMail brings **voice-first email management** to Gmail, enabling independent communication without 
+manual assistance or expensive specialized software.
+
+## 🛠️ Tech Stack
+
+| Component | Technology |
+|-----------|-----------|
+| Frontend | Vanilla JavaScript, Bootstrap 5, Web Speech API |
+| Backend | Node.js, Express, Gmail API |
+| Auth | OAuth 2.0, JWT |
+| Deployment | Render, Vercel, Netlify, Google Cloud Run |
 
 ## 🌟 Features
 
