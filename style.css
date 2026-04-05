@@ -182,11 +182,11 @@
   /* Dark cyan */
 
   /* Semantic Color Tokens (Dark Mode) */
-  --color-background: #121212;
-  --color-surface: #1e1e1e;
+  --color-background: #17171a;
+  --color-surface: #1e2630;
   --color-text: #ffffff;
   --color-text-secondary: #e0e0e0;
-  --color-primary: var(--color-teal-300);
+  --color-primary: #12c0a8;
   --color-primary-hover: var(--color-teal-400);
   --color-primary-active: var(--color-teal-800);
   --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
@@ -241,11 +241,11 @@
     /* Dark cyan */
 
     /* Semantic Color Tokens (Dark Mode) */
-    --color-background: #121212;
-    --color-surface: #1e1e1e;
+    --color-background: #17171a;
+    --color-surface: #1e2630;
     --color-text: #ffffff;
     --color-text-secondary: #e0e0e0;
-    --color-primary: var(--color-teal-300);
+    --color-primary: #12c0a8;
     --color-primary-hover: var(--color-teal-400);
     --color-primary-active: var(--color-teal-800);
     --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
@@ -313,11 +313,11 @@
   /* Dark cyan */
 
   /* Semantic Color Tokens (Dark Mode) */
-  --color-background: #121212;
-  --color-surface: #1e1e1e;
+  --color-background: #17171a;
+  --color-surface: #1e2630;
   --color-text: #ffffff;
   --color-text-secondary: #e0e0e0;
-  --color-primary: var(--color-teal-300);
+  --color-primary: #12c0a8;
   --color-primary-hover: var(--color-teal-400);
   --color-primary-active: var(--color-teal-800);
   --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
@@ -930,18 +930,18 @@ body {
 [data-theme="dark"][data-high-contrast="true"],
 [data-color-scheme="dark"][data-high-contrast="true"] {
   --color-background: #000000;
-  --color-surface: #111111;
+  --color-surface: #000000;
   --color-text: #ffffff;
   --color-text-secondary: #ffffff;
-  --color-border: #555555;
-  --color-primary: #00d4ff;
-  --color-primary-hover: #33ddff;
-  --color-card-border: #444444;
+  --color-border: #ffff00;
+  --color-primary: #ffff00;
+  --color-primary-hover: #e6e600;
+  --color-card-border: #ffff00;
   --color-gray-200: #ffffff;
   --color-gray-300: #ffffff;
   --color-gray-400: #ffffff;
-  --glass-bg: #111111;
-  --glass-border: #444444;
+  --glass-bg: #000000;
+  --glass-border: #ffff00;
 }
 
 /* Ensure body background in high contrast dark */
