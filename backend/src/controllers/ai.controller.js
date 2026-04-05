@@ -5,8 +5,42 @@
 
 import axios from 'axios';
 import logger from '../utils/logger.js';
+import translate from 'translate-google';
 
 const AI_SERVICE_URL = process.env.PYTHON_AI_SERVICE_URL || 'http://localhost:5000';
+
+/**
+ * Process text translation
+ */
+export const translateText = async (req, res) => {
+  try {
+    const { text, targetLang = 'en', sourceLang = 'auto' } = req.body;
+
+    if (!text) {
+      return res.status(400).json({
+        error: 'Missing text',
+        message: 'Please provide text to translate',
+      });
+    }
+
+    const translatedText = await translate(text, { from: sourceLang, to: targetLang });
+    
+    logger.info(`Translation processed successfuly`);
+
+    res.json({
+      success: true,
+      translatedText,
+      originalText: text,
+      targetLanguage: targetLang
+    });
+  } catch (error) {
+    logger.error('Translation error:', error);
+    res.status(500).json({
+      error: 'Translation failed',
+      message: error.message,
+    });
+  }
+};
 
 /**
  * Process speech-to-text

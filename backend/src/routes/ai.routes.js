@@ -14,6 +14,7 @@ import {
   processVoiceCommand,
   detectSpam,
   classifyIntent,
+  translateText,
 } from '../controllers/ai.controller.js';
 
 const router = express.Router();
@@ -21,6 +22,9 @@ const router = express.Router();
 // All AI routes require authentication and have stricter rate limiting
 router.use(authenticate);
 router.use(aiRateLimiter);
+
+// Translation route
+router.post('/translate', asyncHandler(translateText));
 
 // Speech-to-text
 router.post('/speech-to-text', validateVoiceCommand, asyncHandler(processSpeechToText));
