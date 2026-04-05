@@ -2768,6 +2768,11 @@ class VoiceEmailApp {
         this.saveSettings();
         this.applySettings();
         
+        // Update the i18n UI language
+        if (typeof I18N !== 'undefined' && I18N.setLanguage) {
+            I18N.setLanguage(langCode);
+        }
+        
         const select = document.getElementById('voice-language');
         if (select) select.value = langCode;
 
