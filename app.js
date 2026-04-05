@@ -111,7 +111,7 @@ class VoiceEmailApp {
             }
         ];
 
-        // Voice command mappings
+        // Voice command mappings - English
         this.voiceCommands = {
             'sign in': () => this.signInWithVoice(),
             'login': () => this.signInWithVoice(),
@@ -145,10 +145,71 @@ class VoiceEmailApp {
             'confirm save': () => this.saveDraft(),
             'cancel message': () => this.cancelCompose(),
             'cancel': () => this.cancelCurrentAction(),
-            'speak hindi': () => this.switchVoiceLanguage('hi-IN', 'Hindi'),
-            'change to hindi': () => this.switchVoiceLanguage('hi-IN', 'Hindi'),
+            'speak hindi': () => this.switchVoiceLanguage('hi-IN', 'हिन्दी'),
+            'change to hindi': () => this.switchVoiceLanguage('hi-IN', 'हिन्दी'),
             'speak english': () => this.switchVoiceLanguage('en-US', 'English'),
-            'change to english': () => this.switchVoiceLanguage('en-US', 'English')
+            'change to english': () => this.switchVoiceLanguage('en-US', 'English'),
+
+            // Hindi voice commands (हिन्दी वॉइस कमांड)
+            'इनबॉक्स पढ़ें': () => this.readAllEmails(),
+            'सभी ईमेल पढ़ें': () => this.readAllEmails(),
+            'इनबॉक्स पढ़ो': () => this.readAllEmails(),
+            'ईमेल लिखो': () => this.showCompose(),
+            'ईमेल लिखें': () => this.showCompose(),
+            'नया ईमेल': () => this.showCompose(),
+            'सेटिंग्स दिखाओ': () => this.showSettings(),
+            'सेटिंग्स खोलो': () => this.showSettings(),
+            'ईमेल पढ़ो': () => this.readCurrentEmail(),
+            'ईमेल पढ़ें': () => this.readCurrentEmail(),
+            'जवाब दो': () => this.replyToEmail(),
+            'जवाब दें': () => this.replyToEmail(),
+            'आगे भेजो': () => this.forwardEmail(),
+            'आगे भेजें': () => this.forwardEmail(),
+            'हटाओ': () => this.deleteCurrentEmail(),
+            'हटाएं': () => this.deleteCurrentEmail(),
+            'डिलीट करो': () => this.deleteCurrentEmail(),
+            'स्पैम करो': () => this.markAsSpam(),
+            'स्पैम मार्क करो': () => this.markAsSpam(),
+            'ईमेल खोजो': () => this.openSearch(),
+            'खोजें': () => this.openSearch(),
+            'मदद': () => this.showHelp(),
+            'सहायता': () => this.showHelp(),
+            'दोहराओ': () => this.repeatLastSpoken(),
+            'फिर से बोलो': () => this.repeatLastSpoken(),
+            'आवाज़ बढ़ाओ': () => this.increaseVolume(),
+            'आवाज़ कम करो': () => this.decreaseVolume(),
+            'हाई कंट्रास्ट': () => this.toggleContrast(),
+            'बड़ा टेक्स्ट': () => this.confirmLargerText(),
+            'बड़ा टेक्स्ट पुष्टि': () => this.increaseFontSize(),
+            'वापस जाओ': () => this.navigateBack(),
+            'पीछे जाओ': () => this.navigateBack(),
+            'बोलना शुरू करें': () => this.startDictation(),
+            'बोलना शुरू करो': () => this.startDictation(),
+            'बोलना बंद करें': () => this.stopDictation(),
+            'बोलना बंद करो': () => this.stopDictation(),
+            'प्राप्तकर्ता बोलें': () => this.dictateRecipient(),
+            'प्राप्तकर्ता बोलो': () => this.dictateRecipient(),
+            'विषय बोलें': () => this.dictateSubject(),
+            'विषय बोलो': () => this.dictateSubject(),
+            'संदेश बोलें': () => this.dictateMessage(),
+            'संदेश बोलो': () => this.dictateMessage(),
+            'ईमेल भेजो': () => this.confirmAndSendEmail(),
+            'ईमेल भेजें': () => this.confirmAndSendEmail(),
+            'भेजने की पुष्टि': () => this.sendEmail(),
+            'भेजो': () => this.sendEmail(),
+            'ड्राफ़्ट सेव करो': () => this.confirmAndSaveDraft(),
+            'सेव की पुष्टि': () => this.saveDraft(),
+            'रद्द करें': () => this.cancelCurrentAction(),
+            'रद्द करो': () => this.cancelCurrentAction(),
+            'साइन इन': () => this.signInWithVoice(),
+            'लॉगिन': () => this.signInWithVoice(),
+            'लॉग इन': () => this.signInWithVoice(),
+            'हिंदी में बोलो': () => this.switchVoiceLanguage('hi-IN', 'हिन्दी'),
+            'अंग्रेज़ी में बोलो': () => this.switchVoiceLanguage('en-US', 'English'),
+            'अंग्रेजी में बोलो': () => this.switchVoiceLanguage('en-US', 'English'),
+            'लॉग आउट': () => this.logout(),
+            'हाँ': () => { if (this.pendingCommand) { this.voiceCommands[this.pendingCommand](); this.pendingCommand = null; } },
+            'नहीं': () => { if (this.pendingCommand) { this.speak(t('commandCancelled')); this.pendingCommand = null; } }
         };
 
         this.voiceSupported = false;
@@ -178,7 +239,7 @@ class VoiceEmailApp {
                 // Store the JWT token
                 localStorage.setItem('authToken', token);
                 
-                this.showLoadingOverlay('Loading your emails...');
+                this.showLoadingOverlay(t('loadingEmails'));
                 
                 // Clean URL
                 window.history.replaceState({}, document.title, '/');
@@ -192,14 +253,14 @@ class VoiceEmailApp {
                 
                 setTimeout(() => {
                     this.hideLoadingOverlay();
-                    this.speak('Successfully signed in. Loading your inbox.');
-                    this.showToast('Successfully signed in with Google', 'success');
+                    this.speak(t('signedInSuccess'));
+                    this.showToast(t('signedInToast'), 'success');
                     this.navigateToInbox();
                 }, 1000);
                 return;
             } else if (authStatus === 'failed') {
-                this.showToast(`Authentication failed: ${error || 'Unknown error'}`, 'error');
-                this.speak('Authentication failed. Please try again.');
+                this.showToast(`${t('authFailed')}: ${error || ''}`, 'error');
+                this.speak(t('authFailed'));
                 
                 // Clean URL
                 window.history.replaceState({}, document.title, '/');
@@ -209,7 +270,7 @@ class VoiceEmailApp {
             const existingToken = localStorage.getItem('authToken');
             if (existingToken) {
                 // User is already logged in, go to inbox
-                this.showLoadingOverlay('Loading your emails...');
+                this.showLoadingOverlay(t('loadingEmails'));
                 // Start voice recognition only on desktop
                 if (!this.isMobile) {
                     setTimeout(() => {
@@ -232,7 +293,7 @@ class VoiceEmailApp {
             if (!hasSeenTour) {
                 // First-time user, start voice tour automatically
                 setTimeout(() => {
-                    this.speak("Welcome to Voice-Enabled Email System. Starting voice tour to guide you through features.");
+                    this.speak(t('welcomeFirstTime'));
                     // Start the tour after welcome message
                     setTimeout(() => {
                         this.startVoiceTour();
@@ -243,7 +304,7 @@ class VoiceEmailApp {
             } else {
                 // Returning user, show standard welcome
                 setTimeout(() => {
-                    this.speak("Welcome to Voice-Enabled Email System. Press the tutorial button to learn voice commands, or sign in with Google to continue.");
+                    this.speak(t('welcomeReturning'));
                 }, 1000);
             }
             
@@ -255,7 +316,7 @@ class VoiceEmailApp {
             }
         } catch (error) {
             console.error('Initialization error:', error);
-            this.updateVoiceStatus('error', 'Application initialization failed');
+            this.updateVoiceStatus('error', t('appInitFailed'));
         }
     }
 
@@ -285,7 +346,7 @@ class VoiceEmailApp {
                 this.recognition.lang = this.settings.voiceLanguage;
 
                 this.recognition.onstart = () => {
-                    this.updateVoiceStatus('listening', 'Listening for commands...');
+                    this.updateVoiceStatus('listening', t('listening'));
                     this.isListening = true;
                 };
 
@@ -321,13 +382,13 @@ class VoiceEmailApp {
                     
                     console.error('Speech recognition error:', event.error);
                     if (event.error === 'not-allowed') {
-                        this.updateVoiceStatus('error', 'Microphone permission denied');
+                        this.updateVoiceStatus('error', t('micPermissionDenied'));
                         this.isListening = false;
                     } else if (event.error === 'no-speech') {
                         // Don't show error for 'no-speech' - it's normal, just quiet
                         console.log('No speech detected');
                     } else {
-                        this.updateVoiceStatus('error', 'Voice recognition unavailable');
+                        this.updateVoiceStatus('error', t('voiceUnavailable'));
                         this.isListening = false;
                     }
                 };
@@ -337,7 +398,7 @@ class VoiceEmailApp {
                     
                     // On mobile: don't auto-restart recognition (causes audio conflicts)
                     if (this.isMobile) {
-                        this.updateVoiceStatus('inactive', 'Tap mic to speak');
+                        this.updateVoiceStatus('inactive', t('tapMicToSpeak'));
                         return;
                     }
                     
@@ -352,12 +413,12 @@ class VoiceEmailApp {
                             } catch (error) {
                                 if (!error.message?.includes('already started')) {
                                     console.error('Failed to restart recognition:', error);
-                                    this.updateVoiceStatus('inactive', 'Voice commands ready (click to activate)');
+                                    this.updateVoiceStatus('inactive', t('clickToActivate'));
                                 }
                             }
                         }, 100);
                     } else {
-                        this.updateVoiceStatus('inactive', 'Voice commands ready');
+                        this.updateVoiceStatus('inactive', t('voiceReady'));
                     }
                 };
             }
@@ -380,16 +441,16 @@ class VoiceEmailApp {
             }
 
             if (!this.voiceSupported && !this.speechSupported) {
-                this.updateVoiceStatus('error', 'Voice features not supported');
+                this.updateVoiceStatus('error', t('voiceFeaturesNotSupported'));
             } else if (!this.voiceSupported) {
-                this.updateVoiceStatus('inactive', 'Voice commands not supported');
+                this.updateVoiceStatus('inactive', t('voiceNotSupported'));
             } else {
-                this.updateVoiceStatus('inactive', 'Voice commands ready');
+                this.updateVoiceStatus('inactive', t('voiceReady'));
             }
 
         } catch (error) {
             console.error('Voice API initialization error:', error);
-            this.updateVoiceStatus('error', 'Voice initialization failed');
+            this.updateVoiceStatus('error', t('voiceInitFailed'));
             this.voiceSupported = false;
             this.speechSupported = false;
         }
@@ -434,7 +495,7 @@ class VoiceEmailApp {
                     this.isListening = true;
                 } else {
                     console.error('Failed to start voice recognition:', error);
-                    this.updateVoiceStatus('error', 'Click to activate voice');
+                    this.updateVoiceStatus('error', t('clickToActivate'));
                 }
             }
         }
@@ -549,7 +610,7 @@ class VoiceEmailApp {
                 animation: pulse 2s infinite;
             ">
                 <i class="fas fa-volume-up"></i>
-                Tap to enable voice
+                ${t('tapToEnableVoice')}
             </div>
         `;
         
@@ -570,7 +631,7 @@ class VoiceEmailApp {
             setTimeout(() => prompt.remove(), 300);
             
             // Show success message
-            this.showToast('Voice enabled! Tap the mic icon to give voice commands.', 'success');
+            this.showToast(t('voiceEnabled'), 'success');
         }
     }
 
@@ -579,7 +640,7 @@ class VoiceEmailApp {
             this.isListening = false;
             try {
                 this.recognition.stop();
-                this.updateVoiceStatus('inactive', 'Voice commands ready');
+                this.updateVoiceStatus('inactive', t('voiceReady'));
             } catch (error) {
                 console.error('Failed to stop voice recognition:', error);
             }
@@ -587,38 +648,9 @@ class VoiceEmailApp {
     }
 
     async speak(text, interrupt = false) {
-        let textToSpeak = text;
-        
-        // If speaking in a language other than English, translate automatically
-        if (this.settings.voiceLanguage && !this.settings.voiceLanguage.startsWith('en-')) {
-            try {
-                const response = await fetch('/api/ai/translate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
-                    },
-                    body: JSON.stringify({
-                        text: text,
-                        targetLang: this.settings.voiceLanguage.split('-')[0],
-                        sourceLang: 'en'
-                    })
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success && data.translatedText) {
-                        textToSpeak = data.translatedText;
-                        console.log('Translated speech:', text, '->', textToSpeak);
-                    }
-                }
-            } catch (error) {
-                console.error('Speech translation error:', error);
-            }
-        }
-
-        // Use browser TTS directly (Python backend has Google rate limits)
-        this.speakWithBrowser(textToSpeak, interrupt);
+        // Use browser TTS directly - i18n provides pre-translated strings
+        // so no need for API translation calls
+        this.speakWithBrowser(text, interrupt);
     }
 
     async speakWithAI(text, interrupt = false) {
@@ -901,42 +933,75 @@ class VoiceEmailApp {
 
     async processVoiceCommand(command) {
         console.log('Processing voice command:', command);
-        this.updateVoiceStatus('processing', 'Processing command...');
+        this.updateVoiceStatus('processing', t('processing'));
 
         try {
             let processedCommand = command;
             
-            // If the language is not English, translate to English first using our new endpoint
-            if (this.settings.voiceLanguage && !this.settings.voiceLanguage.startsWith('en-')) {
-                try {
-                    const response = await fetch('/api/ai/translate', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
-                        },
-                        body: JSON.stringify({
-                            text: command,
-                            targetLang: 'en',
-                            sourceLang: 'auto'
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success && data.translatedText) {
-                            processedCommand = data.translatedText;
-                            console.log('Translated command:', command, '->', processedCommand);
-                        }
-                    }
-                } catch (translationError) {
-                    console.error('Translation error:', translationError);
-                }
-            }
+            // Hindi commands are now directly in voiceCommands map,
+            // so no translation API call needed. The command matching
+            // below will find Hindi commands directly.
 
             // Normalize command
             const normalizedCommand = processedCommand.toLowerCase().trim();
             
+            // --- 1. Global Stop/Cancel Commands ---
+            if (/\b(stop|halt|shut up|be quiet|pause|cancel|abort|रुको|बंद करो|रद्द करें|चुप रहो|रद्द|रोको)\b/.test(normalizedCommand)) {
+                if (this.synthesis) {
+                    this.synthesis.cancel();
+                    this.isReading = false;
+                }
+                
+                if (this.isDictating) {
+                    this.stopDictation();
+                } else if (this.pendingCommand) {
+                    this.speak(t('commandCancelled'));
+                    this.showToast('Cancelled', 'info');
+                    this.pendingCommand = null;
+                } else {
+                    this.speak("Stopped. रुका।");
+                    this.showToast('Stopped', 'info');
+                }
+                return;
+            }
+
+            // --- 2. Dynamic Pending Command Confirm/Cancel logic ---
+            if (this.pendingCommand) {
+                if (/\b(yes|yeah|yep|sure|okay|confirm|do it|proceed|go ahead|हाँ|हा|ठीक है|करो|आगे बढ़ें|पुष्टि करें)\b/.test(normalizedCommand) || normalizedCommand.includes('yes') || normalizedCommand.includes('हाँ') || normalizedCommand.includes('हा')) {
+                    this.voiceCommands[this.pendingCommand]();
+                    this.showToast(`Command executed: ${this.pendingCommand}`, 'success');
+                    this.pendingCommand = null;
+                } else if (/\b(no|nope|cancel|stop|abort|नहीं|ना|रद्द करें|रुको|बंद करो)\b/.test(normalizedCommand) || normalizedCommand.includes('no') || normalizedCommand.includes('नहीं') || normalizedCommand.includes('ना')) {
+                    this.speak(t('commandCancelled'));
+                    this.showToast('Cancelled', 'info');
+                    this.pendingCommand = null;
+                } else {
+                    this.speak("I didn't catch that. Say 'yes' to confirm or 'no' to cancel. समझ नहीं आया। 'हाँ' या 'नहीं' बोलें।");
+                }
+                return;
+            }
+
+            // --- 3. Dynamic Fuzzy Folder Navigation ---
+            if (/\b(go to|open|show|read|switch to|check|view|खेलो|खोलो|दिखाओ|पढ़ो|जाओ|चेक करो)\s+(sent|spam|inbox|drafts?|भेजे गए|स्पैम|इनबॉक्स|ड्राफ़्ट)\b/.test(normalizedCommand) || /\b(sent|spam|inbox|drafts?|भेजे गए|स्पैम|इनबॉक्स|ड्राफ़्ट)\s+(folder|emails?|फ़ोल्डर|ईमेल)\b/.test(normalizedCommand)) {
+                let folder = 'inbox';
+                if (normalizedCommand.match(/(sent|भेजे गए)/)) folder = 'sent';
+                if (normalizedCommand.match(/(spam|स्पैम)/)) folder = 'spam';
+                if (normalizedCommand.match(/(drafts?|ड्राफ़्ट)/)) folder = 'drafts';
+
+                if (this.currentFolder !== folder) {
+                    this.switchFolder(folder);
+                    // Just switching
+                    this.speak(`Switched to ${folder} folder.`);
+                    this.showToast(`Opened ${folder}`, 'success');
+                }
+
+                // If user said 'read', trigger read all after switching
+                if (/\b(read|check|पढ़ो|चेक करो)\b/.test(normalizedCommand) && !normalizedCommand.match(/(already read|पहले से पढ़ा)/)) {
+                    setTimeout(() => this.readAllEmails(), 1500);
+                }
+                return;
+            }
+
             // Find matching command - check for exact match or partial match
             let matchedCommand = null;
             
@@ -956,39 +1021,29 @@ class VoiceEmailApp {
 
             if (matchedCommand) {
                 if (this.settings.confirmActions && this.isDestructiveCommand(matchedCommand)) {
-                    this.speak(`Are you sure you want to ${matchedCommand}? Say "yes" to confirm or "no" to cancel.`);
+                    this.speak(t('confirmAction', { action: matchedCommand }));
                     this.pendingCommand = matchedCommand;
                     return;
                 }
                 
                 this.voiceCommands[matchedCommand]();
-                this.showToast(`Command executed: ${matchedCommand}`, 'success');
-            } else if (this.pendingCommand) {
-                if (command.includes('yes') || command.includes('confirm')) {
-                    this.voiceCommands[this.pendingCommand]();
-                    this.showToast(`Command executed: ${this.pendingCommand}`, 'success');
-                    this.pendingCommand = null;
-                } else if (command.includes('no') || command.includes('cancel')) {
-                    this.speak('Command cancelled.');
-                    this.showToast('Cancelled', 'info');
-                    this.pendingCommand = null;
-                }
+                this.showToast(`${t('commandExecuted')} ${matchedCommand}`, 'success');
             } else {
-                this.speak("Command not recognized. Say 'help' to hear available commands.");
-                this.showToast('Command not recognized', 'error');
+                this.speak(t('commandNotRecognized'));
+                this.showToast(t('commandNotRecognized'), 'error');
             }
 
             setTimeout(() => {
-                this.updateVoiceStatus('listening', 'Listening for commands...');
+                this.updateVoiceStatus('listening', t('listening'));
             }, 1000);
         } catch (error) {
             console.error('Voice command processing error:', error);
-            this.updateVoiceStatus('error', 'Command processing failed');
+            this.updateVoiceStatus('error', t('commandProcessingFailed'));
         }
     }
 
     isDestructiveCommand(command) {
-        const destructiveCommands = ['delete', 'mark as spam'];
+        const destructiveCommands = ['delete', 'mark as spam', 'हटाओ', 'हटाएं', 'डिलीट करो', 'स्पैम करो', 'स्पैम मार्क करो'];
         return destructiveCommands.includes(command);
     }
 
@@ -997,7 +1052,7 @@ class VoiceEmailApp {
             const lowerText = text.toLowerCase();
             
             // Check for stop command
-            if (lowerText.includes('stop dictating')) {
+            if (lowerText.includes('stop dictating') || lowerText.includes('बोलना बंद')) {
                 this.stopDictation();
                 return;
             }
@@ -1054,8 +1109,8 @@ class VoiceEmailApp {
         if (voiceRecording) {
             voiceRecording.style.display = 'block';
         }
-        this.speak('Dictation started. Speak your message. Say "stop dictating" when finished.');
-        this.showToast('Dictation mode activated', 'info');
+        this.speak(t('dictatingMessage'));
+        this.showToast(t('startDictating'), 'info');
     }
 
     stopDictation() {
@@ -1065,8 +1120,8 @@ class VoiceEmailApp {
         if (voiceRecording) {
             voiceRecording.style.display = 'none';
         }
-        this.speak('Dictation stopped.');
-        this.showToast('Dictation mode deactivated', 'info');
+        this.speak(t('dictationStopped'));
+        this.showToast(t('dictationStopped'), 'info');
     }
     
     dictateRecipient() {
@@ -1078,10 +1133,10 @@ class VoiceEmailApp {
             if (voiceRecording) {
                 voiceRecording.style.display = 'block';
             }
-            this.speak('Dictating recipient. Speak the email address. For example, say: john dot smith at company dot com');
-            this.showToast('Dictation mode: Recipient', 'info');
+            this.speak(t('dictatingRecipient'));
+            this.showToast(t('dictatingRecipient'), 'info');
         } else {
-            this.speak('Please open the compose screen first.');
+            this.speak(t('openComposeFirst'));
         }
     }
     
@@ -1094,10 +1149,10 @@ class VoiceEmailApp {
             if (voiceRecording) {
                 voiceRecording.style.display = 'block';
             }
-            this.speak('Dictating subject. Speak the email subject.');
-            this.showToast('Dictation mode: Subject', 'info');
+            this.speak(t('dictatingSubject'));
+            this.showToast(t('dictatingSubject'), 'info');
         } else {
-            this.speak('Please open the compose screen first.');
+            this.speak(t('openComposeFirst'));
         }
     }
     
@@ -1110,10 +1165,10 @@ class VoiceEmailApp {
             if (voiceRecording) {
                 voiceRecording.style.display = 'block';
             }
-            this.speak('Dictating message. Speak your email message.');
-            this.showToast('Dictation mode: Message', 'info');
+            this.speak(t('dictatingMessage'));
+            this.showToast(t('dictatingMessage'), 'info');
         } else {
-            this.speak('Please open the compose screen first.');
+            this.speak(t('openComposeFirst'));
         }
     }
     
@@ -1124,19 +1179,19 @@ class VoiceEmailApp {
             const body = document.getElementById('compose-body')?.value.trim();
             
             if (!to) {
-                this.speak('Please enter a recipient email address.');
+                this.speak(t('recipientRequired'));
                 this.showToast('Recipient required', 'error');
                 return;
             }
             
             if (!subject) {
-                this.speak('Please enter a subject.');
+                this.speak(t('subjectRequired'));
                 this.showToast('Subject required', 'error');
                 return;
             }
             
             if (!body) {
-                this.speak('Please enter a message.');
+                this.speak(t('messageRequired'));
                 this.showToast('Message required', 'error');
                 return;
             }
@@ -1147,7 +1202,7 @@ class VoiceEmailApp {
             this.showToast('Confirm to send', 'info');
         } catch (error) {
             console.error('Email confirmation error:', error);
-            this.speak('Unable to confirm email.');
+            this.speak(t('unableToConfirm'));
         }
     }
 
@@ -1443,7 +1498,7 @@ class VoiceEmailApp {
             if (testVoiceBtn) {
                 testVoiceBtn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    this.speak('This is a test of your current voice settings.');
+                    this.speak(t('testVoiceMessage'));
                 });
             }
 
@@ -1463,19 +1518,19 @@ class VoiceEmailApp {
         // Check if user is already signed in
         const authToken = localStorage.getItem('authToken');
         if (authToken) {
-            this.speak('You are already signed in.');
+            this.speak(t('alreadySignedIn'));
             this.showToast('Already signed in', 'info');
             return;
         }
         
         // Trigger sign-in process
-        this.speak('Starting sign in with Google.');
+        this.speak(t('startingSignIn'));
         this.simulateOAuth();
     }
 
     async simulateOAuth() {
         console.log('Starting Google OAuth');
-        this.showLoadingOverlay('Connecting to Google...');
+        this.showLoadingOverlay(t('processingText'));
         
         try {
             // Get auth URL from backend
@@ -1491,7 +1546,7 @@ class VoiceEmailApp {
         } catch (error) {
             console.error('OAuth error:', error);
             this.hideLoadingOverlay();
-            this.speak('Failed to connect to Google. Please try again.');
+            this.speak(t('failedConnectGoogle'));
             this.showToast('Failed to connect to Google', 'error');
         }
     }
@@ -1605,7 +1660,7 @@ class VoiceEmailApp {
         // Fetch real emails if authenticated
         const authToken = localStorage.getItem('authToken');
         if (authToken) {
-            this.showLoadingOverlay('Loading your emails...');
+            this.showLoadingOverlay(t('loadingEmails'));
             try {
                 await this.fetchRealEmails();
                 this.hideLoadingOverlay();
@@ -1617,13 +1672,13 @@ class VoiceEmailApp {
         }
         
         this.renderEmailList();
-        this.speak(`Inbox loaded. You have ${this.getUnreadCount()} unread emails.`);
+        this.speak(t('switchedToFolder', { folder: t('inbox'), count: this.getUnreadCount() }));
     }
 
     showCompose() {
         this.showScreen('compose-screen');
         this.clearComposeForm();
-        this.speak('Compose email screen opened. Please enter the recipient email address, or say "start dictating" to use voice input.');
+        this.speak(t('composeScreenOpened'));
         
         // Setup focus event listeners for better guidance
         this.setupComposeFieldListeners();
@@ -1670,7 +1725,7 @@ class VoiceEmailApp {
     showSettings() {
         this.showScreen('settings-screen');
         this.loadSettingsValues();
-        this.speak('Settings opened. You can adjust accessibility preferences using voice commands or the controls.');
+        this.speak(t('settingsOpened'));
     }
 
     showHelp() {
@@ -1685,11 +1740,11 @@ class VoiceEmailApp {
                 }, 500);
             } else {
                 console.error('Help modal not found');
-                this.speak('Help system is not available.');
+                this.speak(t('helpUnavailable'));
             }
         } catch (error) {
             console.error('Show help error:', error);
-            this.speak('Help system encountered an error.');
+            this.speak(t('helpError'));
         }
     }
 
@@ -1713,7 +1768,7 @@ class VoiceEmailApp {
         
         if (existingEmails.length === 0 && labelId && folder !== 'inbox') {
             // Fetch emails for this folder if empty
-            this.showLoadingOverlay(`Loading ${folder} emails...`);
+            this.showLoadingOverlay(t('loadingFolderEmails', { folder: t(folder) || folder }));
             
             try {
                 const authToken = localStorage.getItem('authToken');
@@ -1761,9 +1816,9 @@ class VoiceEmailApp {
         
         this.renderEmailList();
         
-        const folderName = folder.charAt(0).toUpperCase() + folder.slice(1);
+        const folderName = t(folder) || folder.charAt(0).toUpperCase() + folder.slice(1);
         const emailCount = this.getEmailsByFolder(folder).length;
-        this.speak(`Switched to ${folderName}. ${emailCount} emails found.`);
+        this.speak(t('switchedToFolder', { folder: folderName, count: emailCount }));
     }
 
     updateFolderDisplay() {
@@ -1783,7 +1838,7 @@ class VoiceEmailApp {
             // Update folder title
             const currentFolderTitle = document.getElementById('current-folder-title');
             if (currentFolderTitle) {
-                const folderTitle = this.currentFolder.charAt(0).toUpperCase() + this.currentFolder.slice(1);
+                const folderTitle = t(this.currentFolder) || this.currentFolder.charAt(0).toUpperCase() + this.currentFolder.slice(1);
                 currentFolderTitle.textContent = folderTitle;
             }
 
@@ -1834,7 +1889,7 @@ class VoiceEmailApp {
                 emailListElement.innerHTML = `
                     <div class="text-center p-4 text-muted">
                         <i class="fas fa-inbox fa-3x mb-3"></i>
-                        <p>No emails in this folder</p>
+                        <p>${t('noEmails')}</p>
                     </div>
                 `;
             }
@@ -1865,10 +1920,10 @@ class VoiceEmailApp {
             <div class="email-meta">
                 <div class="email-time">${this.formatTimestamp(email.timestamp)}</div>
                 <div class="email-indicators">
-                    ${!email.isRead ? '<span class="badge bg-primary">New</span>' : ''}
+                    ${!email.isRead ? `<span class="badge bg-primary">${t('emailNew')}</span>` : ''}
                     ${email.hasAttachment ? '<span class="badge bg-secondary"><i class="fas fa-paperclip"></i></span>' : ''}
-                    ${email.isSpam ? '<span class="badge bg-danger">Spam</span>' : ''}
-                    <span class="badge bg-${this.getPriorityColor(email.priority)}">${email.priority}</span>
+                    ${email.isSpam ? `<span class="badge bg-danger">${t('emailSpam')}</span>` : ''}
+                    <span class="badge bg-${this.getPriorityColor(email.priority)}">${t('priority' + email.priority.charAt(0).toUpperCase() + email.priority.slice(1)) || email.priority}</span>
                 </div>
             </div>
         `;
@@ -1888,9 +1943,9 @@ class VoiceEmailApp {
     }
 
     getEmailAriaLabel(email) {
-        const status = email.isRead ? 'Read' : 'Unread';
+        const status = email.isRead ? t('ariaRead') : t('ariaUnread');
         const spam = email.isSpam ? ', Spam' : '';
-        const attachment = email.hasAttachment ? ', Has attachment' : '';
+        const attachment = email.hasAttachment ? ', ' + t('ariaHasAttachment') : '';
         const priority = email.priority;
         
         // Show 'To:' for sent and drafts, 'From:' for everything else
@@ -1898,7 +1953,7 @@ class VoiceEmailApp {
             ? `To: ${email.to || email.from}`
             : `From: ${email.from}`;
         
-        return `${status} email${spam}${attachment}, Priority: ${priority}, ${contactField}, Subject: ${email.subject}, ${this.formatTimestamp(email.timestamp)}`;
+        return `${status} email${spam}${attachment}, ${t('priorityNormal')}: ${priority}, ${contactField}, ${t('subject')} ${email.subject}, ${this.formatTimestamp(email.timestamp)}`;
     }
 
     getEmailPreview(body) {
@@ -1913,16 +1968,16 @@ class VoiceEmailApp {
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
             if (diffDays === 1) {
-                return 'Today';
+                return t('today');
             } else if (diffDays === 2) {
-                return 'Yesterday';
+                return t('yesterday');
             } else if (diffDays < 7) {
-                return `${diffDays - 1} days ago`;
+                return t('daysAgo', { count: diffDays - 1 });
             } else {
                 return date.toLocaleDateString();
             }
         } catch (error) {
-            return 'Unknown date';
+            return t('unknownDate');
         }
     }
 
@@ -2101,7 +2156,7 @@ class VoiceEmailApp {
             const fromText = (email.folder === 'sent' || email.folder === 'drafts') 
                 ? `to ${email.to}` 
                 : `from ${email.from}`;
-            this.speak(`Email opened: ${email.subject} ${fromText}. Say "read email" to have it read aloud.`);
+            this.speak(t('emailOpened', { subject: email.subject, contact: fromText }));
         }
     }
 
@@ -2109,24 +2164,24 @@ class VoiceEmailApp {
         const currentFolderEmails = this.emails.filter(email => email.folder === this.currentFolder);
         
         if (currentFolderEmails.length === 0) {
-            this.speak(`No emails in ${this.currentFolder}.`);
+            this.speak(t('noEmailsInFolder', { folder: t(this.currentFolder) || this.currentFolder }));
             return;
         }
 
-        let emailSummary = `You have ${currentFolderEmails.length} emails in ${this.currentFolder}. `;
+        let emailSummary = t('youHaveEmails', { count: currentFolderEmails.length, folder: t(this.currentFolder) || this.currentFolder }) + ' ';
         
         currentFolderEmails.slice(0, 5).forEach((email, index) => {
             const fromText = (email.folder === 'sent' || email.folder === 'drafts') 
                 ? `to ${email.to}` 
                 : `from ${email.from}`;
-            emailSummary += `Email ${index + 1}: ${fromText}. Subject: ${email.subject}. `;
+            emailSummary += t('emailNumber', { number: index + 1, contact: fromText, subject: email.subject }) + ' ';
         });
 
         if (currentFolderEmails.length > 5) {
-            emailSummary += `And ${currentFolderEmails.length - 5} more emails. `;
+            emailSummary += t('andMoreEmails', { count: currentFolderEmails.length - 5 }) + ' ';
         }
 
-        emailSummary += `Say "open email" followed by a number to open a specific email.`;
+        emailSummary += t('sayOpenEmail');
         
         this.speak(emailSummary);
     }
@@ -2185,18 +2240,18 @@ class VoiceEmailApp {
         
         // If extracted content is too short, add a note
         if (messageContent.trim().length < 50) {
-            messageContent = messageContent + '\n\nNote: This email contains mostly images or formatting. The readable text content is limited.';
+            messageContent = messageContent + '\n\n' + t('noContentNote');
         }
 
         console.log('Final message content length:', messageContent.length);
         console.log('Final message content preview:', messageContent.substring(0, 300));
 
         const emailContent = `
-            Email from ${this.currentEmail.from}.
-            Subject: ${this.currentEmail.subject}.
-            Received on ${new Date(this.currentEmail.timestamp).toLocaleDateString()}.
+            ${t('emailFrom', { from: this.currentEmail.from })}
+            ${t('emailSubjectLine', { subject: this.currentEmail.subject })}
+            ${t('receivedOn', { date: new Date(this.currentEmail.timestamp).toLocaleDateString() })}
             
-            Message content:
+            ${t('messageContent')}
             ${messageContent}
         `;
 
@@ -2264,7 +2319,7 @@ class VoiceEmailApp {
         if (composeSubject) composeSubject.value = `Re: ${this.currentEmail.subject}`;
         if (composeBody) composeBody.value = `\n\nOriginal message:\n${this.currentEmail.body}`;
         
-        this.speak('Reply composition started. The recipient and subject have been filled in.');
+        this.speak(t('replyingTo', { from: this.currentEmail.from }));
     }
 
     forwardEmail() {
@@ -2279,7 +2334,7 @@ class VoiceEmailApp {
         if (composeSubject) composeSubject.value = `Fwd: ${this.currentEmail.subject}`;
         if (composeBody) composeBody.value = `\n\nForwarded message:\nFrom: ${this.currentEmail.from}\nSubject: ${this.currentEmail.subject}\n\n${this.currentEmail.body}`;
         
-        this.speak('Forward composition started. Enter the recipient and add your message.');
+        this.speak(t('forwardingEmail'));
         
         // Focus on the 'To' field
         setTimeout(() => {
@@ -2315,13 +2370,13 @@ class VoiceEmailApp {
             }
 
             this.hideLoadingOverlay();
-            this.speak('Email deleted.');
-            this.showToast('Email deleted', 'success');
+            this.speak(t('emailDeleted'));
+            this.showToast(t('emailDeleted'), 'success');
             this.navigateToInbox();
         } catch (error) {
             console.error('Delete email error:', error);
             this.hideLoadingOverlay();
-            this.speak('Failed to delete email.');
+            this.speak(t('failedDeleteEmail'));
             this.showToast('Failed to delete email', 'error');
         }
     }
@@ -2333,8 +2388,8 @@ class VoiceEmailApp {
         this.currentEmail.folder = 'spam';
         this.currentEmail.isSpam = true;
 
-        this.speak('Email marked as spam and moved to spam folder.');
-        this.showToast('Email marked as spam', 'success');
+        this.speak(t('markedAsSpam'));
+        this.showToast(t('markedAsSpam'), 'success');
         this.navigateToInbox();
     }
 
@@ -2355,13 +2410,13 @@ class VoiceEmailApp {
         console.log('Body length:', body.length);
 
         if (!to || !subject || !body) {
-            this.speak('Please fill in all required fields: recipient, subject, and message.');
+            this.speak(t('fillAllFields'));
             this.showToast('Please fill in all required fields', 'error');
             return;
         }
 
         if (!this.isValidEmail(to)) {
-            this.speak('Please enter a valid email address.');
+            this.speak(t('enterValidEmail'));
             this.showToast('Please enter a valid email address', 'error');
             return;
         }
@@ -2395,8 +2450,8 @@ class VoiceEmailApp {
             }
 
             this.hideLoadingOverlay();
-            this.speak('Email sent successfully.');
-            this.showToast('Email sent successfully', 'success');
+            this.speak(t('emailSentSuccess'));
+            this.showToast(t('emailSentToast'), 'success');
             this.clearComposeForm();
             this.navigateToInbox();
             
@@ -2409,8 +2464,8 @@ class VoiceEmailApp {
         } catch (error) {
             console.error('Send email error:', error);
             this.hideLoadingOverlay();
-            this.speak('Failed to send email. Please try again.');
-            this.showToast('Failed to send email', 'error');
+            this.speak(t('emailSendFailed'));
+            this.showToast(t('emailSendFailed'), 'error');
         }
     }
 
@@ -2421,7 +2476,7 @@ class VoiceEmailApp {
             const body = document.getElementById('compose-body')?.value.trim();
             
             if (!to && !subject && !body) {
-                this.speak('No content to save as draft.');
+                this.speak(t('noContentToSave'));
                 this.showToast('No content to save', 'warning');
                 return;
             }
@@ -2432,7 +2487,7 @@ class VoiceEmailApp {
             this.showToast('Confirm to save draft', 'info');
         } catch (error) {
             console.error('Draft confirmation error:', error);
-            this.speak('Unable to confirm draft.');
+            this.speak(t('unableToConfirmDraft'));
         }
     }
     
@@ -2452,13 +2507,13 @@ class VoiceEmailApp {
         const body = composeBody ? composeBody.value : '';
 
         if (!to && !subject && !body) {
-            this.speak('No content to save as draft.');
+            this.speak(t('noContentToSave'));
             return;
         }
 
         // Add to drafts (simulated)
-        this.speak('Email saved as draft.');
-        this.showToast('Draft saved', 'success');
+        this.speak(t('draftSaved'));
+        this.showToast(t('draftSaved'), 'success');
     }
 
     clearComposeForm() {
@@ -2472,7 +2527,7 @@ class VoiceEmailApp {
     }
 
     cancelCompose() {
-        this.speak('Email composition cancelled.');
+        this.speak(t('commandCancelled'));
         this.clearComposeForm();
         this.navigateBack();
     }
@@ -2480,8 +2535,8 @@ class VoiceEmailApp {
     cancelCurrentAction() {
         // Cancel any pending commands
         if (this.pendingCommand) {
-            this.speak('Command cancelled.');
-            this.showToast('Cancelled', 'info');
+            this.speak(t('commandCancelled'));
+            this.showToast(t('cancelled'), 'info');
             this.pendingCommand = null;
             return;
         }
@@ -2528,8 +2583,8 @@ class VoiceEmailApp {
         setTimeout(() => {
             this.hideLoadingOverlay();
             this.renderEmailList();
-            this.speak('Emails refreshed.');
-            this.showToast('Emails refreshed', 'success');
+            this.speak(t('switchedToFolder', { folder: t(this.currentFolder) || this.currentFolder, count: this.getEmailsByFolder(this.currentFolder).length }));
+            this.showToast(t('refreshEmails'), 'success');
         }, 1500);
     }
 
@@ -2558,8 +2613,8 @@ class VoiceEmailApp {
             localStorage.removeItem('authToken');
             
             // Show feedback
-            this.speak('Logged out successfully. Goodbye!');
-            this.showToast('Logged out successfully', 'success');
+            this.speak(t('loggedOut'));
+            this.showToast(t('loggedOutToast'), 'success');
             
             // Return to login screen
             setTimeout(() => {
@@ -2576,7 +2631,7 @@ class VoiceEmailApp {
         if (this.lastSpokenText) {
             this.speak(this.lastSpokenText);
         } else {
-            this.speak('Nothing to repeat.');
+            this.speak(t('nothingToRepeat'));
         }
     }
 
@@ -2588,7 +2643,7 @@ class VoiceEmailApp {
         if (volumeSlider) volumeSlider.value = this.settings.speechVolume;
         if (volumeValue) volumeValue.textContent = `${Math.round(this.settings.speechVolume * 100)}%`;
         
-        this.speak('Volume increased.');
+        this.speak(t('volumeIncreased'));
     }
 
     decreaseVolume() {
@@ -2599,7 +2654,7 @@ class VoiceEmailApp {
         if (volumeSlider) volumeSlider.value = this.settings.speechVolume;
         if (volumeValue) volumeValue.textContent = `${Math.round(this.settings.speechVolume * 100)}%`;
         
-        this.speak('Volume decreased.');
+        this.speak(t('volumeDecreased'));
     }
 
     toggleContrast(force = null) {
@@ -2615,7 +2670,7 @@ class VoiceEmailApp {
             highContrastToggle.checked = shouldEnable;
         }
         
-        this.speak(shouldEnable ? 'High contrast mode enabled.' : 'High contrast mode disabled.');
+        this.speak(shouldEnable ? t('highContrastOn') : t('highContrastOff'));
     }
 
     increaseFontSize() {
@@ -2627,7 +2682,7 @@ class VoiceEmailApp {
         if (fontSizeValue) fontSizeValue.textContent = `${this.settings.fontSize}px`;
         
         document.body.style.fontSize = `${this.settings.fontSize}px`;
-        this.speak('Font size increased.');
+        this.speak(t('fontSizeIncreased'));
     }
 
     // Settings management
@@ -2698,6 +2753,11 @@ class VoiceEmailApp {
                 this.recognition.lang = this.settings.voiceLanguage;
             }
             this.updateVoiceSelection();
+            
+            // Apply i18n translations based on voice language
+            if (window.I18N) {
+                I18N.setLanguage(this.settings.voiceLanguage);
+            }
         } catch (error) {
             console.error('Apply settings error:', error);
         }
@@ -2711,8 +2771,8 @@ class VoiceEmailApp {
         const select = document.getElementById('voice-language');
         if (select) select.value = langCode;
 
-        this.speak(`Voice language changed to ${langName}. I am now listening and speaking in ${langName}.`);
-        this.showToast(`Language set to ${langName}`, 'success');
+        this.speak(t('voiceLanguageChanged', { lang: langName }));
+        this.showToast(t('languageSetTo', { lang: langName }), 'success');
     }
 
     resetSettings() {
@@ -2729,49 +2789,19 @@ class VoiceEmailApp {
         
         this.loadSettingsValues();
         this.applySettings();
-        this.speak('Settings reset to default values.');
-        this.showToast('Settings reset', 'success');
+        this.speak(t('settingsReset'));
+        this.showToast(t('settingsResetToast'), 'success');
     }
 
     startVoiceTour() {
         const tourSteps = [
-            'Welcome to the voice tour. I will guide you through all the voice commands.',
-            
-            // Navigation commands
-            'Navigation commands: Say "read inbox" or "read all emails" to hear your email list.',
-            'Say "go back" to return to the previous screen.',
-            'Say "search emails" to search your mailbox.',
-            
-            // Email actions
-            'Email actions: When viewing an email, say "read email" to have it read aloud.',
-            'Say "reply" to reply to the current email.',
-            'Say "forward" to forward the email.',
-            'Say "delete" to delete the email.',
-            'Say "mark as spam" to mark it as spam.',
-            
-            // Composing emails
-            'Composing emails: Say "compose email" to write a new message.',
-            'Say "start dictating" to use voice input for text fields.',
-            'Say "dictate recipient", "dictate subject", or "dictate message" to fill specific fields.',
-            'Say "stop dictating" when done with voice input.',
-            'Say "send email" to review and send your message.',
-            'Say "confirm send" to confirm sending.',
-            'Say "save draft" and "confirm save" to save as draft.',
-            'Say "cancel message" to discard your email.',
-            
-            // Settings and accessibility
-            'Settings and accessibility: Say "show settings" to open preferences.',
-            'Say "louder" or "quieter" to adjust voice volume.',
-            'Say "larger text" to increase font size.',
-            'Say "high contrast" or "toggle contrast" for better visibility.',
-            
-            // General commands
-            'General commands: Say "help" anytime to hear this guide.',
-            'Say "repeat" to hear the last spoken message again.',
-            'Say "cancel" to cancel the current action.',
-            'Say "sign in" or "login" when on the login screen.',
-            
-            'Voice tour complete. You can now use these commands to navigate the email system. Enjoy!'
+            t('tourWelcome'),
+            t('tourNavigation'),
+            t('tourEmail'),
+            t('tourCompose'),
+            t('tourSystem'),
+            t('tourLanguage'),
+            t('tourComplete')
         ];
 
         let currentStep = 0;
@@ -3091,7 +3121,7 @@ class VoiceEmailApp {
         } catch (error) {
             console.error('Download attachment error:', error);
             this.hideLoadingOverlay();
-            this.speak('Failed to download attachment');
+            this.speak(t('downloadFailed'));
             this.showToast('Failed to download attachment', 'error');
         }
     }
@@ -3201,7 +3231,7 @@ class VoiceEmailApp {
         this.applyTheme();
         this.saveSettings();
         const mode = this.settings.darkMode ? 'dark' : 'light';
-        this.speak(`Switched to ${mode} mode`);
+        this.speak(t('switchedToMode', { mode: t(mode + 'Mode') || mode }));
         this.announceToScreenReader(`Theme changed to ${mode} mode`);
     }
 

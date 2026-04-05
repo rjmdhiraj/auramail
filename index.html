@@ -30,14 +30,14 @@
 
 <body>
     <!-- Skip Navigation Link -->
-    <a href="#main-content" class="skip-nav" aria-label="Skip to main content">Skip to main content</a>
+    <a href="#main-content" class="skip-nav" data-i18n-aria="skipToMainContent" aria-label="Skip to main content"><span data-i18n="skipToMainContent">Skip to main content</span></a>
 
     <!-- Voice Status Indicator -->
     <div id="voice-status" class="voice-status" role="status" aria-live="polite" aria-atomic="true">
         <div class="status-icon">
             <i class="fas fa-microphone-slash" id="status-icon" aria-hidden="true"></i>
         </div>
-        <span id="status-text">Voice commands ready</span>
+        <span id="status-text" data-i18n="voiceReady">Voice commands ready</span>
     </div>
 
     <!-- Screen Reader Announcements -->
@@ -49,31 +49,31 @@
             <div class="text-center mb-4">
                 <h1 id="login-title" class="display-4 mb-3">
                     <i class="fas fa-envelope-open-text me-3" aria-hidden="true"></i>
-                    AuraMail
+                    <span data-i18n="welcomeTitle">AuraMail</span>
                 </h1>
-                <p class="lead" id="welcome-message">Welcome to your accessible email experience</p>
+                <p class="lead" id="welcome-message" data-i18n="welcomeSubtitle">Welcome to your accessible email experience</p>
             </div>
 
             <div class="card glass-card">
                 <div class="card-body text-center p-4">
-                    <h2 class="h4 mb-3">Get Started</h2>
-                    <p class="mb-4">Experience hands-free email management with voice commands</p>
+                    <h2 class="h4 mb-3" data-i18n="getStarted">Get Started</h2>
+                    <p class="mb-4" data-i18n="getStartedDesc">Experience hands-free email management with voice commands</p>
 
                     <button id="oauth-btn" class="btn btn--primary btn-lg mb-3" aria-describedby="oauth-desc"
-                        type="button" aria-label="Sign in with Google OAuth">
+                        type="button" data-i18n-aria="signInGoogle" aria-label="Sign in with Google OAuth">
                         <i class="fab fa-google me-2" aria-hidden="true"></i>
-                        Sign in with Google
+                        <span data-i18n="signInGoogle">Sign in with Google</span>
                     </button>
-                    <p id="oauth-desc" class="small text-muted">Secure authentication with Google OAuth. You'll be
+                    <p id="oauth-desc" class="small text-muted" data-i18n="signInGoogleDesc">Secure authentication with Google OAuth. You'll be
                         redirected to Google's login page.</p>
 
                     <div class="mt-4">
                         <button id="tutorial-btn" class="btn btn--outline" type="button"
                             aria-describedby="tutorial-desc">
                             <i class="fas fa-graduation-cap me-2" aria-hidden="true"></i>
-                            Voice Tutorial
+                            <span data-i18n="voiceTutorial">Voice Tutorial</span>
                         </button>
-                        <p id="tutorial-desc" class="small text-muted mt-2">Learn voice commands (5 minutes)</p>
+                        <p id="tutorial-desc" class="small text-muted mt-2" data-i18n="voiceTutorialDesc">Learn voice commands (5 minutes)</p>
                     </div>
                 </div>
             </div>
@@ -88,26 +88,26 @@
 
     <!-- Main Dashboard/Inbox -->
     <div id="dashboard-screen" class="screen" role="main" aria-labelledby="dashboard-title">
-        <nav class="navbar glass-navbar" role="navigation" aria-label="Main navigation">
+        <nav class="navbar glass-navbar" role="navigation" data-i18n-aria="ariaMainNav" aria-label="Main navigation">
             <div class="container-fluid">
                 <h1 id="dashboard-title" class="navbar-brand">
                     <i class="fas fa-inbox me-2" aria-hidden="true"></i>
-                    AuraMail
+                    <span data-i18n="appName">AuraMail</span>
                 </h1>
 
                 <div class="navbar-nav flex-row gap-2">
                     <button id="compose-btn" class="btn btn--primary" type="button" aria-describedby="compose-desc">
                         <i class="fas fa-plus me-2" aria-hidden="true"></i>
-                        Compose
+                        <span data-i18n="compose">Compose</span>
                     </button>
-                    <button id="settings-btn" class="btn btn--outline" type="button" aria-label="Open settings">
+                    <button id="settings-btn" class="btn btn--outline" type="button" data-i18n-aria="settings" aria-label="Open settings">
                         <i class="fas fa-cog" aria-hidden="true"></i>
                     </button>
-                    <button id="theme-toggle" class="btn btn--outline" type="button" aria-label="Toggle dark mode">
+                    <button id="theme-toggle" class="btn btn--outline" type="button" data-i18n-aria="toggleDarkMode" aria-label="Toggle dark mode">
                         <i class="fas fa-moon" id="theme-icon" aria-hidden="true"></i>
-                        <span class="visually-hidden">Toggle dark mode</span>
+                        <span class="visually-hidden" data-i18n="toggleDarkMode">Toggle dark mode</span>
                     </button>
-                    <button id="logout-btn" class="btn btn--outline" type="button" aria-label="Logout">
+                    <button id="logout-btn" class="btn btn--outline" type="button" data-i18n-aria="logout" aria-label="Logout">
                         <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
                     </button>
                 </div>
@@ -120,35 +120,35 @@
                 <div class="col-md-3">
                     <div class="card glass-card">
                         <div class="card-body">
-                            <h2 class="h5 mb-3">Email Folders</h2>
-                            <nav role="navigation" aria-label="Email folders">
+                            <h2 class="h5 mb-3" data-i18n="emailFolders">Email Folders</h2>
+                            <nav role="navigation" data-i18n-aria="ariaEmailFolders" aria-label="Email folders">
                                 <ul class="nav flex-column folder-nav" role="menubar">
                                     <li class="nav-item" role="none">
                                         <button class="nav-link folder-link active" data-folder="inbox" role="menuitem"
                                             aria-pressed="true">
                                             <i class="fas fa-inbox me-2" aria-hidden="true"></i>
-                                            Inbox <span class="badge" id="inbox-count">3</span>
+                                            <span data-i18n="inbox">Inbox</span> <span class="badge" id="inbox-count">3</span>
                                         </button>
                                     </li>
                                     <li class="nav-item" role="none">
                                         <button class="nav-link folder-link" data-folder="sent" role="menuitem"
                                             aria-pressed="false">
                                             <i class="fas fa-paper-plane me-2" aria-hidden="true"></i>
-                                            Sent
+                                            <span data-i18n="sent">Sent</span>
                                         </button>
                                     </li>
                                     <li class="nav-item" role="none">
                                         <button class="nav-link folder-link" data-folder="drafts" role="menuitem"
                                             aria-pressed="false">
                                             <i class="fas fa-edit me-2" aria-hidden="true"></i>
-                                            Drafts
+                                            <span data-i18n="drafts">Drafts</span>
                                         </button>
                                     </li>
                                     <li class="nav-item" role="none">
                                         <button class="nav-link folder-link" data-folder="spam" role="menuitem"
                                             aria-pressed="false">
                                             <i class="fas fa-exclamation-triangle me-2" aria-hidden="true"></i>
-                                            Spam <span class="badge badge-warning" id="spam-count">1</span>
+                                            <span data-i18n="spam">Spam</span> <span class="badge badge-warning" id="spam-count">1</span>
                                         </button>
                                     </li>
                                 </ul>
@@ -162,21 +162,21 @@
                     <div class="card glass-card">
                         <div class="card-header">
                             <div class="d-flex justify-content-between align-items-center">
-                                <h2 class="h5 mb-0" id="current-folder-title">Inbox</h2>
+                                <h2 class="h5 mb-0" id="current-folder-title" data-i18n="inbox">Inbox</h2>
                                 <div class="d-flex gap-2">
                                     <button id="search-btn" class="btn btn--outline btn-sm" type="button"
-                                        aria-label="Search emails">
+                                        data-i18n-aria="searchEmails" aria-label="Search emails">
                                         <i class="fas fa-search" aria-hidden="true"></i>
                                     </button>
                                     <button id="refresh-btn" class="btn btn--outline btn-sm" type="button"
-                                        aria-label="Refresh emails">
+                                        data-i18n-aria="refreshEmails" aria-label="Refresh emails">
                                         <i class="fas fa-sync-alt" aria-hidden="true"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
                         <div class="card-body p-0">
-                            <div id="email-list" class="email-list" role="list" aria-label="Email list">
+                            <div id="email-list" class="email-list" role="list" data-i18n-aria="ariaEmailList" aria-label="Email list">
                                 <!-- Email items will be populated by JavaScript -->
                             </div>
                         </div>
@@ -203,43 +203,46 @@
                 <div class="col-lg-8">
                     <div class="card glass-card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h1 id="compose-title" class="h4 mb-0">Compose Email</h1>
+                            <h1 id="compose-title" class="h4 mb-0" data-i18n="composeEmail">Compose Email</h1>
                             <button id="back-to-inbox" class="btn btn--outline" type="button"
-                                aria-label="Back to inbox">
+                                data-i18n-aria="backToInbox" aria-label="Back to inbox">
                                 <i class="fas fa-arrow-left me-2" aria-hidden="true"></i>
-                                Back
+                                <span data-i18n="back">Back</span>
                             </button>
                         </div>
                         <div class="card-body">
                             <form id="compose-form" novalidate>
                                 <div class="mb-3">
-                                    <label for="compose-to" class="form-label">To:</label>
+                                    <label for="compose-to" class="form-label" data-i18n="toLabel">To:</label>
                                     <input type="email" id="compose-to" class="form-control"
+                                        data-i18n-placeholder="toPlaceholder"
                                         placeholder="Enter recipient email address" aria-describedby="to-help" required>
-                                    <div id="to-help" class="form-text">Say "dictate recipient" to use voice input</div>
+                                    <div id="to-help" class="form-text" data-i18n="toDictateHelp">Say "dictate recipient" to use voice input</div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="compose-subject" class="form-label">Subject:</label>
+                                    <label for="compose-subject" class="form-label" data-i18n="subjectLabel">Subject:</label>
                                     <input type="text" id="compose-subject" class="form-control"
+                                        data-i18n-placeholder="subjectPlaceholder"
                                         placeholder="Enter email subject" aria-describedby="subject-help">
-                                    <div id="subject-help" class="form-text">Say "dictate subject" to use voice input
+                                    <div id="subject-help" class="form-text" data-i18n="subjectDictateHelp">Say "dictate subject" to use voice input
                                     </div>
                                 </div>
 
                                 <div class="mb-4">
-                                    <label for="compose-body" class="form-label">Message:</label>
+                                    <label for="compose-body" class="form-label" data-i18n="messageLabel">Message:</label>
                                     <textarea id="compose-body" class="form-control" rows="12"
+                                        data-i18n-placeholder="messagePlaceholder"
                                         placeholder="Type your message or use voice dictation"
                                         aria-describedby="body-help"></textarea>
-                                    <div id="body-help" class="form-text">Say "dictate message" or "start dictating" to
+                                    <div id="body-help" class="form-text" data-i18n="messageDictateHelp">Say "dictate message" or "start dictating" to
                                         compose with voice</div>
                                 </div>
 
                                 <div id="voice-recording" class="voice-recording mb-4" style="display: none;">
                                     <div class="recording-indicator">
                                         <div class="recording-pulse"></div>
-                                        <span>Listening... Say "stop dictating" when done</span>
+                                        <span data-i18n="listeningDictation">Listening... Say "stop dictating" when done</span>
                                     </div>
                                     <div class="voice-waveform">
                                         <div class="waveform-bar"></div>
@@ -253,15 +256,15 @@
                                 <div class="d-flex gap-2 flex-wrap">
                                     <button type="submit" id="send-email" class="btn btn--primary">
                                         <i class="fas fa-paper-plane me-2" aria-hidden="true"></i>
-                                        Send Email
+                                        <span data-i18n="sendEmail">Send Email</span>
                                     </button>
                                     <button type="button" id="dictate-btn" class="btn btn--outline">
                                         <i class="fas fa-microphone me-2" aria-hidden="true"></i>
-                                        Start Dictating
+                                        <span data-i18n="startDictating">Start Dictating</span>
                                     </button>
                                     <button type="button" id="save-draft" class="btn btn--secondary">
                                         <i class="fas fa-save me-2" aria-hidden="true"></i>
-                                        Save Draft
+                                        <span data-i18n="saveDraft">Save Draft</span>
                                     </button>
                                 </div>
                             </form>
@@ -280,21 +283,21 @@
                     <div class="card glass-card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <button id="back-from-reader" class="btn btn--outline" type="button"
-                                aria-label="Back to email list">
+                                data-i18n-aria="backToEmailList" aria-label="Back to email list">
                                 <i class="fas fa-arrow-left" aria-hidden="true"></i>
                             </button>
                             <div class="email-actions d-flex gap-2">
                                 <button id="reply-btn" class="btn btn--outline" type="button">
                                     <i class="fas fa-reply me-1" aria-hidden="true"></i>
-                                    Reply
+                                    <span data-i18n="reply">Reply</span>
                                 </button>
                                 <button id="forward-btn" class="btn btn--outline" type="button">
                                     <i class="fas fa-share me-1" aria-hidden="true"></i>
-                                    Forward
+                                    <span data-i18n="forward">Forward</span>
                                 </button>
                                 <button id="delete-btn" class="btn btn--outline text-danger" type="button">
                                     <i class="fas fa-trash me-1" aria-hidden="true"></i>
-                                    Delete
+                                    <span data-i18n="delete">Delete</span>
                                 </button>
                             </div>
                         </div>
@@ -303,13 +306,13 @@
                                 <h1 id="reader-title" class="email-subject mb-2"></h1>
                                 <div class="email-meta">
                                     <p class="mb-1">
-                                        <strong>From:</strong> <span id="email-from"></span>
+                                        <strong data-i18n="from">From:</strong> <span id="email-from"></span>
                                     </p>
                                     <p class="mb-1">
-                                        <strong>Date:</strong> <span id="email-date"></span>
+                                        <strong data-i18n="date">Date:</strong> <span id="email-date"></span>
                                     </p>
                                     <div id="email-attachments" style="display: none;">
-                                        <strong>Attachments:</strong>
+                                        <strong data-i18n="attachments">Attachments:</strong>
                                         <span class="badge bg-info">📎 Attachment</span>
                                     </div>
                                 </div>
@@ -318,17 +321,17 @@
                             <div id="reading-controls" class="reading-controls mb-3">
                                 <button id="read-email-btn" class="btn btn--primary" type="button">
                                     <i class="fas fa-play me-2" aria-hidden="true"></i>
-                                    Read Email Aloud
+                                    <span data-i18n="readEmailAloud">Read Email Aloud</span>
                                 </button>
                                 <button id="pause-reading-btn" class="btn btn--outline" type="button"
                                     style="display: none;">
                                     <i class="fas fa-pause me-2" aria-hidden="true"></i>
-                                    Pause Reading
+                                    <span data-i18n="pauseReading">Pause Reading</span>
                                 </button>
                                 <button id="stop-reading-btn" class="btn btn--outline" type="button"
                                     style="display: none;">
                                     <i class="fas fa-stop me-2" aria-hidden="true"></i>
-                                    Stop Reading
+                                    <span data-i18n="stopReading">Stop Reading</span>
                                 </button>
                             </div>
 
@@ -349,19 +352,19 @@
                 <div class="col-lg-6">
                     <div class="card glass-card">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h1 id="settings-title" class="h4 mb-0">Accessibility Settings</h1>
+                            <h1 id="settings-title" class="h4 mb-0" data-i18n="accessibilitySettings">Accessibility Settings</h1>
                             <button id="back-from-settings" class="btn btn--outline" type="button"
-                                aria-label="Back to dashboard">
+                                data-i18n-aria="backToDashboard" aria-label="Back to dashboard">
                                 <i class="fas fa-arrow-left" aria-hidden="true"></i>
                             </button>
                         </div>
                         <div class="card-body">
                             <form id="settings-form">
                                 <fieldset class="mb-4">
-                                    <legend class="h6">Text & Display</legend>
+                                    <legend class="h6" data-i18n="textAndDisplay">Text & Display</legend>
 
                                     <div class="mb-3">
-                                        <label for="font-size" class="form-label">Font Size:</label>
+                                        <label for="font-size" class="form-label" data-i18n="fontSize">Font Size:</label>
                                         <input type="range" id="font-size" class="form-range" min="14" max="24"
                                             value="16" aria-describedby="font-size-value">
                                         <div id="font-size-value" class="form-text">16px</div>
@@ -370,64 +373,64 @@
                                     <div class="mb-3 form-check form-switch">
                                         <input type="checkbox" id="high-contrast" class="form-check-input"
                                             role="switch">
-                                        <label for="high-contrast" class="form-check-label">High Contrast Mode</label>
+                                        <label for="high-contrast" class="form-check-label" data-i18n="highContrastMode">High Contrast Mode</label>
                                     </div>
                                 </fieldset>
 
                                 <fieldset class="mb-4">
-                                    <legend class="h6">Voice Settings</legend>
+                                    <legend class="h6" data-i18n="voiceSettings">Voice Settings</legend>
 
                                     <div class="mb-3">
-                                        <label for="speech-rate" class="form-label">Speech Rate:</label>
+                                        <label for="speech-rate" class="form-label" data-i18n="speechRate">Speech Rate:</label>
                                         <input type="range" id="speech-rate" class="form-range" min="0.5" max="2.0"
                                             step="0.1" value="1.0" aria-describedby="speech-rate-value">
-                                        <div id="speech-rate-value" class="form-text">1.0x (Normal)</div>
+                                        <div id="speech-rate-value" class="form-text">1.0x (<span data-i18n="normalSpeed">Normal</span>)</div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="speech-volume" class="form-label">Speech Volume:</label>
+                                        <label for="speech-volume" class="form-label" data-i18n="speechVolume">Speech Volume:</label>
                                         <input type="range" id="speech-volume" class="form-range" min="0.1" max="1.0"
                                             step="0.1" value="0.8" aria-describedby="speech-volume-value">
                                         <div id="speech-volume-value" class="form-text">80%</div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="voice-language" class="form-label">Voice Language:</label>
+                                        <label for="voice-language" class="form-label" data-i18n="voiceLanguage">Voice Language:</label>
                                         <select id="voice-language" class="form-control">
-                                            <option value="en-US">English (US)</option>
-                                            <option value="en-GB">English (UK)</option>
-                                            <option value="es-ES">Spanish</option>
-                                            <option value="fr-FR">French</option>
-                                            <option value="hi-IN">Hindi</option>
+                                            <option value="en-US" data-i18n="langEnglishUS">English (US)</option>
+                                            <option value="en-GB" data-i18n="langEnglishUK">English (UK)</option>
+                                            <option value="es-ES" data-i18n="langSpanish">Spanish</option>
+                                            <option value="fr-FR" data-i18n="langFrench">French</option>
+                                            <option value="hi-IN" data-i18n="langHindi">Hindi</option>
                                         </select>
                                     </div>
                                 </fieldset>
 
                                 <fieldset class="mb-4">
-                                    <legend class="h6">Behavior Settings</legend>
+                                    <legend class="h6" data-i18n="behaviorSettings">Behavior Settings</legend>
 
                                     <div class="mb-3 form-check form-switch">
                                         <input type="checkbox" id="auto-read" class="form-check-input" role="switch"
                                             checked>
-                                        <label for="auto-read" class="form-check-label">Auto-read emails when
+                                        <label for="auto-read" class="form-check-label" data-i18n="autoReadEmails">Auto-read emails when
                                             opened</label>
                                     </div>
 
                                     <div class="mb-3 form-check form-switch">
                                         <input type="checkbox" id="confirm-actions" class="form-check-input"
                                             role="switch" checked>
-                                        <label for="confirm-actions" class="form-check-label">Voice confirmation for
+                                        <label for="confirm-actions" class="form-check-label" data-i18n="voiceConfirmation">Voice confirmation for
                                             actions</label>
                                     </div>
                                 </fieldset>
 
                                 <button type="button" id="test-voice" class="btn btn--primary me-2">
                                     <i class="fas fa-volume-up me-2" aria-hidden="true"></i>
-                                    Test Voice Settings
+                                    <span data-i18n="testVoice">Test Voice Settings</span>
                                 </button>
                                 <button type="button" id="reset-settings" class="btn btn--outline">
                                     <i class="fas fa-undo me-2" aria-hidden="true"></i>
-                                    Reset to Defaults
+                                    <span data-i18n="resetToDefaults">Reset to Defaults</span>
                                 </button>
                             </form>
                         </div>
@@ -442,56 +445,56 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content glass-modal">
                 <div class="modal-header">
-                    <h2 id="help-title" class="modal-title">Voice Commands Guide</h2>
+                    <h2 id="help-title" class="modal-title" data-i18n="voiceCommandsGuide">Voice Commands Guide</h2>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close help dialog"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h3 class="h5">Navigation Commands</h3>
+                            <h3 class="h5" data-i18n="navigationCommands">Navigation Commands</h3>
                             <ul class="command-list">
-                                <li><strong>"read inbox"</strong> - Go to inbox</li>
-                                <li><strong>"compose email"</strong> - Start new email</li>
-                                <li><strong>"show settings"</strong> - Open settings</li>
-                                <li><strong>"go back"</strong> - Return to previous screen</li>
-                                <li><strong>"help"</strong> - Show this guide</li>
+                                <li data-i18n="helpReadInbox"><strong>"read inbox"</strong> - Go to inbox</li>
+                                <li data-i18n="helpComposeEmail"><strong>"compose email"</strong> - Start new email</li>
+                                <li data-i18n="helpShowSettings"><strong>"show settings"</strong> - Open settings</li>
+                                <li data-i18n="helpGoBack"><strong>"go back"</strong> - Return to previous screen</li>
+                                <li data-i18n="helpHelp"><strong>"help"</strong> - Show this guide</li>
                             </ul>
                         </div>
                         <div class="col-md-6">
-                            <h3 class="h5">Email Commands</h3>
+                            <h3 class="h5" data-i18n="emailCommands">Email Commands</h3>
                             <ul class="command-list">
-                                <li><strong>"read email"</strong> - Read current email aloud</li>
-                                <li><strong>"reply"</strong> - Reply to email</li>
-                                <li><strong>"forward"</strong> - Forward email</li>
-                                <li><strong>"delete"</strong> - Delete email</li>
-                                <li><strong>"mark as spam"</strong> - Mark as spam</li>
+                                <li data-i18n="helpReadEmail"><strong>"read email"</strong> - Read current email aloud</li>
+                                <li data-i18n="helpReply"><strong>"reply"</strong> - Reply to email</li>
+                                <li data-i18n="helpForward"><strong>"forward"</strong> - Forward email</li>
+                                <li data-i18n="helpDelete"><strong>"delete"</strong> - Delete email</li>
+                                <li data-i18n="helpMarkSpam"><strong>"mark as spam"</strong> - Mark as spam</li>
                             </ul>
                         </div>
                     </div>
                     <div class="row mt-3">
                         <div class="col-md-6">
-                            <h3 class="h5">Composition Commands</h3>
+                            <h3 class="h5" data-i18n="compositionCommands">Composition Commands</h3>
                             <ul class="command-list">
-                                <li><strong>"dictate recipient"</strong> - Voice input for recipient</li>
-                                <li><strong>"dictate subject"</strong> - Voice input for subject</li>
-                                <li><strong>"dictate message"</strong> - Voice input for message</li>
-                                <li><strong>"start dictating"</strong> - Begin voice input</li>
-                                <li><strong>"stop dictating"</strong> - End voice input</li>
-                                <li><strong>"send email"</strong> - Confirm and send</li>
-                                <li><strong>"confirm send"</strong> - Confirm sending</li>
-                                <li><strong>"save draft"</strong> - Save as draft with confirmation</li>
-                                <li><strong>"confirm save"</strong> - Confirm saving draft</li>
-                                <li><strong>"cancel"</strong> - Cancel action</li>
+                                <li data-i18n="helpDictateRecipient"><strong>"dictate recipient"</strong> - Voice input for recipient</li>
+                                <li data-i18n="helpDictateSubject"><strong>"dictate subject"</strong> - Voice input for subject</li>
+                                <li data-i18n="helpDictateMessage"><strong>"dictate message"</strong> - Voice input for message</li>
+                                <li data-i18n="helpStartDictating"><strong>"start dictating"</strong> - Begin voice input</li>
+                                <li data-i18n="helpStopDictating"><strong>"stop dictating"</strong> - End voice input</li>
+                                <li data-i18n="helpSendEmail"><strong>"send email"</strong> - Confirm and send</li>
+                                <li data-i18n="helpConfirmSend"><strong>"confirm send"</strong> - Confirm sending</li>
+                                <li data-i18n="helpSaveDraft"><strong>"save draft"</strong> - Save as draft with confirmation</li>
+                                <li data-i18n="helpConfirmSave"><strong>"confirm save"</strong> - Confirm saving draft</li>
+                                <li data-i18n="helpCancel"><strong>"cancel"</strong> - Cancel action</li>
                             </ul>
                         </div>
                         <div class="col-md-6">
-                            <h3 class="h5">System Commands</h3>
+                            <h3 class="h5" data-i18n="systemCommands">System Commands</h3>
                             <ul class="command-list">
-                                <li><strong>"repeat"</strong> - Repeat last announcement</li>
-                                <li><strong>"louder"</strong> - Increase volume</li>
-                                <li><strong>"quieter"</strong> - Decrease volume</li>
-                                <li><strong>"high contrast"</strong> - Toggle contrast mode</li>
+                                <li data-i18n="helpRepeat"><strong>"repeat"</strong> - Repeat last announcement</li>
+                                <li data-i18n="helpLouder"><strong>"louder"</strong> - Increase volume</li>
+                                <li data-i18n="helpQuieter"><strong>"quieter"</strong> - Decrease volume</li>
+                                <li data-i18n="helpHighContrast"><strong>"high contrast"</strong> - Toggle contrast mode</li>
                             </ul>
                         </div>
                     </div>
@@ -499,9 +502,9 @@
                 <div class="modal-footer">
                     <button type="button" id="start-voice-tour" class="btn btn--primary">
                         <i class="fas fa-microphone me-2" aria-hidden="true"></i>
-                        Start Voice Tour
+                        <span data-i18n="startVoiceTour">Start Voice Tour</span>
                     </button>
-                    <button type="button" class="btn btn--outline" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn--outline" data-bs-dismiss="modal"><span data-i18n="close">Close</span></button>
                 </div>
             </div>
         </div>
@@ -519,13 +522,14 @@
             <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
-            <p id="loading-text" class="mt-3">Processing...</p>
+            <p id="loading-text" class="mt-3" data-i18n="processingText">Processing...</p>
         </div>
     </div>
 
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="i18n.js"></script>
     <script src="app.js"></script>
 </body>
 
