@@ -209,7 +209,64 @@ class VoiceEmailApp {
             'अंग्रेजी में बोलो': () => this.switchVoiceLanguage('en-US', 'English'),
             'लॉग आउट': () => this.logout(),
             'हाँ': () => { if (this.pendingCommand) { this.voiceCommands[this.pendingCommand](); this.pendingCommand = null; } },
-            'नहीं': () => { if (this.pendingCommand) { this.speak(t('commandCancelled')); this.pendingCommand = null; } }
+            'नहीं': () => { if (this.pendingCommand) { this.speak(t('commandCancelled')); this.pendingCommand = null; } },
+
+            // Hinglish / Romanized Hindi commands (how people actually speak)
+            'inbox kholo': () => this.readAllEmails(),
+            'inbox padho': () => this.readAllEmails(),
+            'inbox dikhao': () => this.readAllEmails(),
+            'email padho': () => this.readCurrentEmail(),
+            'email likho': () => this.showCompose(),
+            'naya email': () => this.showCompose(),
+            'new email likho': () => this.showCompose(),
+            'email bhejo': () => this.confirmAndSendEmail(),
+            'reply karo': () => this.replyToEmail(),
+            'jawab do': () => this.replyToEmail(),
+            'forward karo': () => this.forwardEmail(),
+            'aage bhejo': () => this.forwardEmail(),
+            'delete karo': () => this.deleteCurrentEmail(),
+            'hatao': () => this.deleteCurrentEmail(),
+            'spam karo': () => this.markAsSpam(),
+            'search karo': () => this.openSearch(),
+            'settings kholo': () => this.showSettings(),
+            'setting dikhao': () => this.showSettings(),
+            'madad': () => this.showHelp(),
+            'help karo': () => this.showHelp(),
+            'wapas jao': () => this.navigateBack(),
+            'back jao': () => this.navigateBack(),
+            'peeche jao': () => this.navigateBack(),
+            'dobara bolo': () => this.repeatLastSpoken(),
+            'phir se bolo': () => this.repeatLastSpoken(),
+            'awaaz badhao': () => this.increaseVolume(),
+            'volume badhao': () => this.increaseVolume(),
+            'awaaz kam karo': () => this.decreaseVolume(),
+            'volume kam karo': () => this.decreaseVolume(),
+            'dark mode karo': () => this.toggleDarkMode(),
+            'dark mode lagao': () => this.toggleDarkMode(),
+            'light mode karo': () => this.toggleDarkMode(),
+            'bada text': () => this.confirmLargerText(),
+            'font bada karo': () => this.increaseFontSize(),
+            'bolna shuru karo': () => this.startDictation(),
+            'bolna band karo': () => this.stopDictation(),
+            'draft save karo': () => this.confirmAndSaveDraft(),
+            'email cancel karo': () => this.cancelCompose(),
+            'sign in karo': () => this.signInWithVoice(),
+            'login karo': () => this.signInWithVoice(),
+            'log out karo': () => this.logout(),
+            'logout karo': () => this.logout(),
+            'hindi mein bolo': () => this.switchVoiceLanguage('hi-IN', 'हिन्दी'),
+            'english mein bolo': () => this.switchVoiceLanguage('en-US', 'English'),
+            'sent dikhao': () => this.switchFolder('sent'),
+            'sent kholo': () => this.switchFolder('sent'),
+            'draft dikhao': () => this.switchFolder('drafts'),
+            'draft kholo': () => this.switchFolder('drafts'),
+            'spam dikhao': () => this.switchFolder('spam'),
+            'trash dikhao': () => this.switchFolder('trash'),
+            'refresh karo': () => this.refreshEmails(),
+            'high contrast karo': () => this.toggleContrast(),
+            'haan': () => { if (this.pendingCommand) { this.voiceCommands[this.pendingCommand](); this.pendingCommand = null; } },
+            'nahi': () => { if (this.pendingCommand) { this.speak(t('commandCancelled')); this.pendingCommand = null; } },
+            'ha': () => { if (this.pendingCommand) { this.voiceCommands[this.pendingCommand](); this.pendingCommand = null; } }
         };
 
         this.voiceSupported = false;
@@ -733,13 +790,14 @@ class VoiceEmailApp {
                 this.isListening = false;
             }
 
-            // Cancel any ongoing speech first (iOS fix)
+            // Cancel any ongoing speech first
             if (this.synthesis.speaking || this.synthesis.pending) {
                 this.synthesis.cancel();
+                // Only delay if we had to cancel something (iOS needs it)
+                setTimeout(() => this._doSpeak(text), this.isMobile ? 80 : 10);
+            } else {
+                this._doSpeak(text);
             }
-            
-            // Small delay after cancel (iOS fix)
-            setTimeout(() => this._doSpeak(text), 100);
             
         } catch (error) {
             console.error('Speech synthesis error:', error);
@@ -760,7 +818,7 @@ class VoiceEmailApp {
             }
 
             // Split long text into chunks (Web Speech API has issues with long text)
-            const maxChunkLength = 150; // Shorter chunks for mobile
+            const maxChunkLength = this.isMobile ? 150 : 250;
             const chunks = this.splitTextIntoChunks(text, maxChunkLength);
             console.log('Speaking text in', chunks.length, 'chunks');
             
@@ -774,10 +832,9 @@ class VoiceEmailApp {
                     this.shouldRestartRecognition = true;
                     setTimeout(() => {
                         if (!this.isListening && this.voiceSupported && this.recognition) {
-                            console.log('Attempting to restart recognition');
                             this.startVoiceRecognition();
                         }
-                    }, 500);
+                    }, 200);
                     return;
                 }
                 
@@ -786,14 +843,9 @@ class VoiceEmailApp {
                 
                 const utterance = new SpeechSynthesisUtterance(chunk);
                 
-                // Select appropriate voice
-                voices = this.synthesis.getVoices();
+                // Use cached voice (avoid repeated getVoices() calls)
                 if (this.currentVoice) {
                     utterance.voice = this.currentVoice;
-                } else if (voices.length > 0) {
-                    // Prefer English voice on mobile
-                    const englishVoice = voices.find(v => v.lang.startsWith('en'));
-                    utterance.voice = englishVoice || voices[0];
                 }
                 
                 utterance.rate = this.settings.speechRate;
@@ -946,7 +998,8 @@ class VoiceEmailApp {
             const normalizedCommand = processedCommand.toLowerCase().trim();
             
             // --- 1. Global Stop/Cancel Commands ---
-            if (/\b(stop|halt|shut up|be quiet|pause|cancel|abort|रुको|बंद करो|रद्द करें|चुप रहो|रद्द|रोको)\b/.test(normalizedCommand)) {
+            if (/\b(stop|halt|shut up|be quiet|pause|cancel|abort|रुको|बंद करो|रद्द करें|चुप रहो|रद्द|रोको|ruko|band karo|chup|rok)\b/.test(normalizedCommand)) {
+                this.isTourRunning = false; // Stop any ongoing voice tour
                 if (this.synthesis) {
                     this.synthesis.cancel();
                     this.isReading = false;
@@ -967,11 +1020,11 @@ class VoiceEmailApp {
 
             // --- 2. Dynamic Pending Command Confirm/Cancel logic ---
             if (this.pendingCommand) {
-                if (/\b(yes|yeah|yep|sure|okay|confirm|do it|proceed|go ahead|हाँ|हा|ठीक है|करो|आगे बढ़ें|पुष्टि करें)\b/.test(normalizedCommand) || normalizedCommand.includes('yes') || normalizedCommand.includes('हाँ') || normalizedCommand.includes('हा')) {
+                if (/\b(yes|yeah|yep|sure|okay|confirm|do it|proceed|go ahead|हाँ|हा|ठीक है|करो|आगे बढ़ें|पुष्टि करें|haan|ha|theek hai|theek|chalo|kar do)\b/.test(normalizedCommand) || normalizedCommand.includes('yes') || normalizedCommand.includes('हाँ') || normalizedCommand.includes('haan')) {
                     this.voiceCommands[this.pendingCommand]();
                     this.showToast(`Command executed: ${this.pendingCommand}`, 'success');
                     this.pendingCommand = null;
-                } else if (/\b(no|nope|cancel|stop|abort|नहीं|ना|रद्द करें|रुको|बंद करो)\b/.test(normalizedCommand) || normalizedCommand.includes('no') || normalizedCommand.includes('नहीं') || normalizedCommand.includes('ना')) {
+                } else if (/\b(no|nope|cancel|stop|abort|नहीं|ना|रद्द करें|रुको|बंद करो|nahi|naa|mat karo|cancel karo)\b/.test(normalizedCommand) || normalizedCommand.includes('no') || normalizedCommand.includes('नहीं') || normalizedCommand.includes('nahi')) {
                     this.speak(t('commandCancelled'));
                     this.showToast('Cancelled', 'info');
                     this.pendingCommand = null;
@@ -982,7 +1035,7 @@ class VoiceEmailApp {
             }
 
             // --- 3. Dynamic Fuzzy Folder Navigation ---
-            if (/\b(go to|open|show|read|switch to|check|view|खेलो|खोलो|दिखाओ|पढ़ो|जाओ|चेक करो)\s+(sent|spam|inbox|drafts?|भेजे गए|स्पैम|इनबॉक्स|ड्राफ़्ट)\b/.test(normalizedCommand) || /\b(sent|spam|inbox|drafts?|भेजे गए|स्पैम|इनबॉक्स|ड्राफ़्ट)\s+(folder|emails?|फ़ोल्डर|ईमेल)\b/.test(normalizedCommand)) {
+            if (/\b(go to|open|show|read|switch to|check|view|खोलो|दिखाओ|पढ़ो|जाओ|चेक करो|kholo|dikhao|padho|jao|check karo)\s+(sent|spam|inbox|drafts?|भेजे गए|स्पैम|इनबॉक्स|ड्राफ़्ट)\b/.test(normalizedCommand) || /\b(sent|spam|inbox|drafts?|भेजे गए|स्पैम|इनबॉक्स|ड्राफ़्ट)\s+(folder|emails?|फ़ोल्डर|ईमेल|kholo|dikhao|padho|wale)\b/.test(normalizedCommand)) {
                 let folder = 'inbox';
                 if (normalizedCommand.match(/(sent|भेजे गए)/)) folder = 'sent';
                 if (normalizedCommand.match(/(spam|स्पैम)/)) folder = 'spam';
@@ -991,8 +1044,8 @@ class VoiceEmailApp {
                 if (this.currentFolder !== folder) {
                     this.switchFolder(folder);
                     // Just switching
-                    this.speak(`Switched to ${folder} folder.`);
-                    this.showToast(`Opened ${folder}`, 'success');
+                    this.speak(t('switchedToFolder', { folder: t(folder), count: '' }));
+                    this.showToast(`${t(folder)}`, 'success');
                 }
 
                 // If user said 'read', trigger read all after switching
@@ -2965,14 +3018,45 @@ class VoiceEmailApp {
         ];
 
         let currentStep = 0;
+        this.isTourRunning = true;
         
         const speakNextStep = () => {
+            if (!this.isTourRunning) {
+                this.showToast('Voice tour cancelled.');
+                return;
+            }
+
             if (currentStep < tourSteps.length) {
-                this.speak(tourSteps[currentStep]);
-                currentStep++;
-                setTimeout(speakNextStep, 5000); // Wait 5 seconds between steps
+                const stepText = tourSteps[currentStep];
+                
+                // Highlight commands in the dictation toast
+                const commands = (stepText.match(/"([^"]+)"/g) || []).map(cmd => cmd.toUpperCase());
+                const toastDuration = Math.max(stepText.length * 80 + 1000, 4000);
+                
+                if (commands.length > 0) {
+                    this.showToast(`📌 Try Saying: ${commands.join(' | ')}`, 'info', toastDuration);
+                } else {
+                    this.showToast(`🗣️ ${stepText}`, 'info', toastDuration);
+                }
+
+                this.speak(stepText);
+                
+                // Check if currently speaking before moving to next step
+                // Fixes overlapping issues where dictation is cut off
+                const checkDone = () => {
+                    if (this.synthesis && (this.synthesis.speaking || this.synthesis.pending)) {
+                        setTimeout(checkDone, 800);
+                    } else {
+                        currentStep++;
+                        setTimeout(speakNextStep, 1000); // 1-second pause between steps
+                    }
+                };
+                
+                // Give the browser a moment to initialize speech synth before polling
+                setTimeout(checkDone, 1000);
             } else {
                 // Close help modal
+                this.isTourRunning = false;
                 try {
                     const helpModalElement = document.getElementById('help-modal');
                     if (helpModalElement) {
@@ -3286,7 +3370,7 @@ class VoiceEmailApp {
         }
     }
 
-    showToast(message, type = 'info') {
+    showToast(message, type = 'info', duration = 3000) {
         try {
             const toastContainer = document.getElementById('toast-container');
             if (!toastContainer) return;
@@ -3305,7 +3389,7 @@ class VoiceEmailApp {
             
             const toastElement = document.getElementById(toastId);
             if (toastElement && window.bootstrap) {
-                const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+                const toast = new bootstrap.Toast(toastElement, { delay: duration });
                 toast.show();
                 
                 toastElement.addEventListener('hidden.bs.toast', () => {
