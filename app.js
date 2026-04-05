@@ -1029,8 +1029,33 @@ class VoiceEmailApp {
                 this.voiceCommands[matchedCommand]();
                 this.showToast(`${t('commandExecuted')} ${matchedCommand}`, 'success');
             } else {
-                this.speak(t('commandNotRecognized'));
-                this.showToast(t('commandNotRecognized'), 'error');
+                // --- NLU Fallback: Understand natural language intent ---
+                const nluResult = (typeof NLU !== 'undefined') ? NLU.understand(normalizedCommand, this.settings.voiceLanguage) : null;
+
+                if (nluResult && nluResult.confidence >= 0.7) {
+                    console.log(`[NLU] Intent: ${nluResult.intent}, Action: ${nluResult.action}, Confidence: ${nluResult.confidence.toFixed(2)}`, nluResult.params);
+                    
+                    // Check for destructive actions
+                    if (nluResult.destructive && this.settings.confirmActions) {
+                        this.speak(t('confirmAction', { action: nluResult.intent }));
+                        // Store a reference so pending confirm executes the NLU action
+                        this._pendingNLUAction = nluResult;
+                        this.pendingCommand = '__nlu_action__';
+                        // Wire up temporary confirm handler
+                        this.voiceCommands['__nlu_action__'] = () => {
+                            this._executeNLUAction(this._pendingNLUAction);
+                            delete this.voiceCommands['__nlu_action__'];
+                            this._pendingNLUAction = null;
+                        };
+                        return;
+                    }
+
+                    this._executeNLUAction(nluResult);
+                    this.showToast(`${t('commandExecuted')} ${nluResult.intent}`, 'success');
+                } else {
+                    this.speak(t('commandNotRecognized'));
+                    this.showToast(t('commandNotRecognized'), 'error');
+                }
             }
 
             setTimeout(() => {
@@ -1039,6 +1064,136 @@ class VoiceEmailApp {
         } catch (error) {
             console.error('Voice command processing error:', error);
             this.updateVoiceStatus('error', t('commandProcessingFailed'));
+        }
+    }
+
+    /**
+     * Execute an action identified by the NLU engine
+     */
+    _executeNLUAction(nluResult) {
+        const { action, params } = nluResult;
+
+        switch (action) {
+            // --- Navigation ---
+            case 'readAllEmails':
+                this.navigateToInbox();
+                setTimeout(() => this.readAllEmails(), 1500);
+                break;
+            case 'showCompose':
+                this.showCompose();
+                break;
+            case 'showSettings':
+                this.showSettings();
+                break;
+            case 'navigateBack':
+                this.navigateBack();
+                break;
+            case 'showHelp':
+                this.showHelp();
+                break;
+            case 'logout':
+                this.logout();
+                break;
+            case 'signInWithVoice':
+                this.signInWithVoice();
+                break;
+
+            // --- Folder switching ---
+            case 'switchFolder':
+                if (params.folder && this.currentFolder !== params.folder) {
+                    this.switchFolder(params.folder);
+                }
+                break;
+
+            // --- Email actions ---
+            case 'readCurrentEmail':
+                this.readCurrentEmail();
+                break;
+            case 'openEmailByNumber':
+                if (params.emailNumber != null) {
+                    const emailNum = params.emailNumber === -1 ? this.emails.length : params.emailNumber;
+                    if (emailNum >= 1 && emailNum <= this.emails.length) {
+                        this.openEmail(this.emails[emailNum - 1]);
+                    } else {
+                        this.speak(t('commandNotRecognized'));
+                    }
+                } else {
+                    // No number found, just read current
+                    this.readCurrentEmail();
+                }
+                break;
+            case 'replyToEmail':
+                this.replyToEmail();
+                break;
+            case 'forwardEmail':
+                this.forwardEmail();
+                break;
+            case 'deleteCurrentEmail':
+                this.deleteCurrentEmail();
+                break;
+            case 'markAsSpam':
+                this.markAsSpam();
+                break;
+
+            // --- Dictation ---
+            case 'startDictation':
+                this.startDictation();
+                break;
+            case 'stopDictation':
+                this.stopDictation();
+                break;
+            case 'dictateRecipient':
+                this.dictateRecipient();
+                break;
+            case 'dictateSubject':
+                this.dictateSubject();
+                break;
+            case 'dictateMessage':
+                this.dictateMessage();
+                break;
+
+            // --- Send/Save ---
+            case 'confirmAndSendEmail':
+                this.confirmAndSendEmail();
+                break;
+            case 'sendEmail':
+                this.sendEmail();
+                break;
+            case 'confirmAndSaveDraft':
+                this.confirmAndSaveDraft();
+                break;
+
+            // --- Accessibility ---
+            case 'toggleDarkMode':
+                this.toggleDarkMode();
+                break;
+            case 'toggleContrast':
+                this.toggleContrast();
+                break;
+            case 'increaseVolume':
+                this.increaseVolume();
+                break;
+            case 'decreaseVolume':
+                this.decreaseVolume();
+                break;
+            case 'increaseFontSize':
+                this.increaseFontSize();
+                break;
+            case 'repeatLastSpoken':
+                this.repeatLastSpoken();
+                break;
+            case 'refreshEmails':
+                this.refreshEmails();
+                break;
+
+            // --- Language ---
+            case 'switchLanguage':
+                this.switchVoiceLanguage(params.langCode, params.langName);
+                break;
+
+            default:
+                console.warn(`[NLU] Unknown action: ${action}`);
+                this.speak(t('commandNotRecognized'));
         }
     }
 
