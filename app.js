@@ -144,7 +144,11 @@ class VoiceEmailApp {
             'save draft': () => this.confirmAndSaveDraft(),
             'confirm save': () => this.saveDraft(),
             'cancel message': () => this.cancelCompose(),
-            'cancel': () => this.cancelCurrentAction()
+            'cancel': () => this.cancelCurrentAction(),
+            'speak hindi': () => this.switchVoiceLanguage('hi-IN', 'Hindi'),
+            'change to hindi': () => this.switchVoiceLanguage('hi-IN', 'Hindi'),
+            'speak english': () => this.switchVoiceLanguage('en-US', 'English'),
+            'change to english': () => this.switchVoiceLanguage('en-US', 'English')
         };
 
         this.voiceSupported = false;
@@ -415,6 +419,12 @@ class VoiceEmailApp {
     startVoiceRecognition() {
         if (this.recognition && !this.isListening && this.voiceSupported) {
             try {
+                // Cancel any ongoing speech synthesis immediately
+                if (this.synthesis && (this.synthesis.speaking || this.synthesis.pending)) {
+                    this.synthesis.cancel();
+                    this.isReading = false;
+                }
+                
                 this.recognition.start();
                 this.isListening = true;
             } catch (error) {
@@ -577,8 +587,38 @@ class VoiceEmailApp {
     }
 
     async speak(text, interrupt = false) {
+        let textToSpeak = text;
+        
+        // If speaking in a language other than English, translate automatically
+        if (this.settings.voiceLanguage && !this.settings.voiceLanguage.startsWith('en-')) {
+            try {
+                const response = await fetch('/api/ai/translate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        targetLang: this.settings.voiceLanguage.split('-')[0],
+                        sourceLang: 'en'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.translatedText) {
+                        textToSpeak = data.translatedText;
+                        console.log('Translated speech:', text, '->', textToSpeak);
+                    }
+                }
+            } catch (error) {
+                console.error('Speech translation error:', error);
+            }
+        }
+
         // Use browser TTS directly (Python backend has Google rate limits)
-        this.speakWithBrowser(text, interrupt);
+        this.speakWithBrowser(textToSpeak, interrupt);
     }
 
     async speakWithAI(text, interrupt = false) {
@@ -859,13 +899,43 @@ class VoiceEmailApp {
         }
     }
 
-    processVoiceCommand(command) {
+    async processVoiceCommand(command) {
         console.log('Processing voice command:', command);
         this.updateVoiceStatus('processing', 'Processing command...');
 
         try {
+            let processedCommand = command;
+            
+            // If the language is not English, translate to English first using our new endpoint
+            if (this.settings.voiceLanguage && !this.settings.voiceLanguage.startsWith('en-')) {
+                try {
+                    const response = await fetch('/api/ai/translate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+                        },
+                        body: JSON.stringify({
+                            text: command,
+                            targetLang: 'en',
+                            sourceLang: 'auto'
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.translatedText) {
+                            processedCommand = data.translatedText;
+                            console.log('Translated command:', command, '->', processedCommand);
+                        }
+                    }
+                } catch (translationError) {
+                    console.error('Translation error:', translationError);
+                }
+            }
+
             // Normalize command
-            const normalizedCommand = command.toLowerCase().trim();
+            const normalizedCommand = processedCommand.toLowerCase().trim();
             
             // Find matching command - check for exact match or partial match
             let matchedCommand = null;
@@ -1349,11 +1419,8 @@ class VoiceEmailApp {
             const voiceLanguageSelect = document.getElementById('voice-language');
             if (voiceLanguageSelect) {
                 voiceLanguageSelect.addEventListener('change', (e) => {
-                    this.settings.voiceLanguage = e.target.value;
-                    if (this.recognition) {
-                        this.recognition.lang = e.target.value;
-                    }
-                    this.updateVoiceSelection();
+                    const langName = e.target.options[e.target.selectedIndex].text;
+                    this.switchVoiceLanguage(e.target.value, langName);
                 });
             }
 
@@ -2634,6 +2701,18 @@ class VoiceEmailApp {
         } catch (error) {
             console.error('Apply settings error:', error);
         }
+    }
+
+    switchVoiceLanguage(langCode, langName) {
+        this.settings.voiceLanguage = langCode;
+        this.saveSettings();
+        this.applySettings();
+        
+        const select = document.getElementById('voice-language');
+        if (select) select.value = langCode;
+
+        this.speak(`Voice language changed to ${langName}. I am now listening and speaking in ${langName}.`);
+        this.showToast(`Language set to ${langName}`, 'success');
     }
 
     resetSettings() {
